@@ -1,0 +1,30 @@
+get http://localhost:3100/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiZW1haWwiOiJkb2Rva2pyMTJAZ21haWwuY29tIiwiaWF0IjoxNzIzMzg3NDM3LCJleHAiOjE3MjM0NzM4Mzd9.iTWeXtVd_l_wk-Y3_VgZgYIAkVIMAgINHkLtIkXjy20
+###
+POST http://localhost:3100/users
+Content-Type: application/json
+
+{
+    "name": "admin122",
+    "email": "admin1@gmail.com",
+    "password": "1234567",
+    "confPassword": "1234567",
+    "pin": "12345"
+}
+
+###
+POST http://localhost:3100/login
+Content-Type: application/json
+
+{
+    "name": "dodokjr",
+    "email": "dodokjr12@gmail.com",
+    "password": "1234567",
+    "pin": "12345"
+}
+
+###
+GET http://localhost:3100/token
+
+###
+DELETE http://localhost:3100/logout

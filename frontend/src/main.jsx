@@ -9,7 +9,7 @@ import {
 import Login from './components/login.jsx';
 import Register from './components/Register.jsx';
 import path from 'path';
-import Navbar from './components/Navbar.jsx';
+import Navbar from './components/utilities/Navbar.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import ProfileApps from './apps/paramsApps/ProfileApps.jsx';
 

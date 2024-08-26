@@ -36,8 +36,8 @@ export const getDashbordUsers = async (req, res) =>
 export const registerUsers = async (req, res) =>
 {
     const { name, email, password, confPassword, pin } = req.body;
-    if (!name || !email || !password || !confPassword || !pin) return res.status(400).json({ msg: "Tolong Isi Yang Benar Tidak boleh ada yang kosong" })
-    if (password !== confPassword) return res.status(400).json({ msg: "Password dan confirm Password Tidak Sama" });
+    if (!name || !email || !password || !confPassword || !pin) return res.status(400).json({ succes: false, msg: "Tolong Isi Yang Benar Tidak boleh ada yang kosong" })
+    if (password !== confPassword) return res.status(400).json({ succes: false, msg: "Password dan confirm Password Tidak Sama" });
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt);
     const hashPin = await bcrypt.hash(pin, salt);
@@ -49,7 +49,7 @@ export const registerUsers = async (req, res) =>
         const existingUser = await Users.findOne({ where: { name: name } });
         if (existingUser)
         {
-            return res.status(400).json({ msg: "UserName Sudah Ada Mohon Cari Nama Yang Lain" })
+            return res.status(400).json({ succes: false, msg: "UserName Sudah Ada Mohon Cari Nama Yang Lain" })
         }
         await Users.create({
             name: name,
@@ -59,10 +59,10 @@ export const registerUsers = async (req, res) =>
             image_profile: image_profile,
             bio: bio
         });
-        res.json({ msg: "Register Berhasil Ditambahkan" })
+        res.json({ succes: true, msg: "Register Berhasil Ditambahkan" })
     } catch (error)
     {
-        res.status(500).json({ msg: "data Tidak Berhasil DiTambahkan" })
+        res.status(500).json({ succes: false, msg: "data Tidak Berhasil DiTambahkan" })
     }
 }
 
@@ -74,7 +74,7 @@ export const LoginUsers = async (req, res) =>
         const existingUser = await Users.findOne({ where: { name: req.body.name } });
         if (!existingUser)
         {
-            return res.status(404).json({ msg: "userName dan Email Tidak Ada mohon register dulu Ya" })
+            return res.status(400).send({ succes: false, msg: "userName dan Email Tidak Ada mohon register dulu Ya" })
         }
         const user = await Users.findAll({
             where: {
@@ -83,7 +83,7 @@ export const LoginUsers = async (req, res) =>
         });
         const match = await bcrypt.compare(req.body.password, user[0].password)
         const pinmatch = await bcrypt.compare(req.body.pin, user[0].pin)
-        if (!match || !pinmatch) return res.status(400).json({ msg: "pin atau password Tidak Sama" })
+        if (!match || !pinmatch) return res.status(400).json({ succes: false, msg: "pin atau password Tidak Sama" })
         const userId = user[0].id;
         const name = user[0].name;
         const accesstToken = jwt.sign({ userId, name }, process.env.ACCESS_TOKEN_SECRET, {
@@ -101,11 +101,17 @@ export const LoginUsers = async (req, res) =>
             httpOnly: true,
             sameSite: 'none',
             secure: true,
-            maxAge: 24 * 60 * 60 * 1000,
-        }).send({ msg: "login sussces", accesstToken });
+            maxAge: 1 * 60 * 60 * 1000,
+        })
+        res.status(200).send({
+            succes: true,
+            msg: "Login Berhasil",
+            data: { accesstToken }
+        })
+
     } catch (error)
     {
-        res.status(404).json({ msg: "name atau email Tidak Di Temukan" })
+        res.status(404).json({ succes: false, msg: "name atau email Tidak Di Temukan" })
     }
 }
 

@@ -13,7 +13,7 @@ export default function Login() {
     const Login = async(e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3100/login', {
+           const res = await axios.post('http://localhost:3100/login', {
                 name: name,
                 email: email,
                 password: password,

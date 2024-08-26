@@ -3,6 +3,7 @@ import { getDashbordUsers, getUsers, LoginUsers, LogoutUsers, registerUsers } fr
 import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/refreshToken.js";
 
+
 const route = express.Router()
 
 route.get("/users", verifyToken, getUsers)

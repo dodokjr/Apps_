@@ -12,13 +12,16 @@ const Dashboard = () => {
   useEffect(() => {
     refreshToken()
   },[])
+
   const refreshToken = async() => {
     try {
       const response = await axios.get('http://localhost:3100/token', { withCredentials: true })
-      setToken(response.data.accesstToken)
-      const decode = jwtDecode(response.data.accesstToken)
+      setToken(response.data.data.accesstToken)
+      const decode = jwtDecode(response.data.data.accesstToken)
       setName(decode.name)
+      console.log(decode)
       setExpire(decode.exp)
+      localStorage.setItem("user_accessToken", response.data.data.accesstToken)
     } catch (error) {
       if(error.response) {
         return navigate("/login")
@@ -32,9 +35,10 @@ const Dashboard = () => {
     const currentDate = new Date();
     if(expire * 1000 < currentDate.getTime()){
       const response = await axios.get('http://localhost:3100/token', { withCredentials: true })
-      config.headers.Authorization = `Barer  ${response.data.accesstToken}`;
-      setToken(response.data.accesstToken)
-      const decode = jwtDecode(response.data.accesstToken)
+      config.headers.Authorization = `Barer  ${response.data.data.accesstToken}`;
+      setToken(response.data.data.accesstToken)
+      localStorage.setItem("Users_refreshToken", response)
+      const decode = jwtDecode(response.data.data.accesstToken)
       setName(decode.name)
       setExpire(decode.exp)
     }

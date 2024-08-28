@@ -1,60 +1,41 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from"react-router-dom"
+import { FaBars, FaSearch } from "react-icons/fa";
+import { ModalSearch } from './modal/modal';
 
-export default function Navbar() {
-  const navigate = useNavigate()
-  const [isActive, setisActive] = useState(false)
-
-  const Logout = async () => {
-    try {
-     await axios.delete("http://localhost:3100/logout", { withCredentials: true })
-     localStorage.clear("usersAccessToken")
-     navigate("/login")
-    } catch (error) {
-      navigate("/")
-    }
-  }
+export default function Navbar({
+  heading,
+  paragraph,
+  linkName,
+  linkUrl="#",
+  imgSrc,
+  data
+}) {
   return (
-    <nav className="navbar" role="navigation" aria-label="main navigation">
-      <div className="container">
-      <div className="navbar-brand">
-        <a className="navbar-item" href="#">
-         Logo Media Social
-        </a>
-    
-        <a onClick={() => {
-            setisActive(!isActive)
-          }}
-          role='button'
-          className={`navbar-burger burger ${isActive ? 'is-active' : ''}`}
-          aria-label='menu'
-          aria-expanded='false'
-          data-target='navbarBasicExample'>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-    
-      <div id="navbarBasicExample" className={`navbar-menu ${isActive ? 'is-active' : ''}`}>
-        <div className="navbar-start">
-          <a className="navbar-item">
-            Home
-          </a>
-          </div>
-        <div className="navbar-end">
-          <div className="navbar-item">
-            <div className="buttons">
-              <button onClick={Logout} className="button is-light">
-                Log out
-              </button>
-            </div>
-          </div>
+    <div className="navbar bg-base-100">
+    <div className="navbar-start">
+    </div>
+    <div className="navbar-center">
+      <a className="btn btn-ghost text-xl">Media Social Root</a>
+    </div>
+    <div className="navbar-end">
+      <button className="btn btn-ghost btn-circle">
+        <FaSearch className="h-5 w-5" onClick={() => document.getElementById("searchBox").showModal()}/>
+      </button>
+      {data ? <div className="dropdown dropdown-end">
+        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+          <div>{data}</div>
         </div>
-        </div>
-    
-        </div>
-    </nav>
+        <ul
+          tabIndex={0}
+          className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+          <li><a href={`/${data}`}>Profile</a></li>
+          <li><a href='/account/setting'>Setting</a></li>
+        </ul>
+      </div>: <a href='/login' role="button" className="btn btn-ghost btn-circle">Login</a>}
+    </div>
+    <ModalSearch/>
+  </div>
   )
 }

@@ -1,17 +1,19 @@
 import React, { Children } from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import 'bulma/css/bulma.css'
+import App from './App.jsx';
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Login from './components/login.jsx';
-import Register from './components/Register.jsx';
+import Login from './Login.jsx';
+import Register from './Register.jsx';
 import path from 'path';
-import Navbar from './components/utilities/Navbar.jsx';
-import Dashboard from './components/Dashboard.jsx';
-import ProfileApps from './apps/paramsApps/ProfileApps.jsx';
+import Navbar from '../components/utilities/Navbar.jsx';
+import Dashboard from '../components/Dashboard.jsx';
+import ProfileApps from './paramsApps/profile/ProfileApps.jsx';
+import "../assets/css/App.css"
+import SettingProfile from './paramsApps/profile/SettingProfile.jsx';
+import Forgotpassword from './forgotpassword.jsx';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ const router = createBrowserRouter([
   {
     path: "/:name",
     element: <ProfileApps/>
+  },
+  {
+    path: "/forgotpassword",
+    element: <Forgotpassword/>
+  },
+  {
+    path: "/account/setting",
+    element: <SettingProfile/>
   },
   {
     path: "/dashboard",

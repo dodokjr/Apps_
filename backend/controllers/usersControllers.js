@@ -1,7 +1,7 @@
 import Users from "../models/usersModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { QueryTypes } from "sequelize";
+import { QueryTypes, where } from "sequelize";
 
 export const getUsers = async (req, res) =>
 {
@@ -23,11 +23,11 @@ export const getDashbordUsers = async (req, res) =>
 
     try
     {
-        const users = await Users.findOne({ where: { name: query } })
-        res.json({ data: users })
+        const users = await Users.findOne({ attributes: ["id", "name", "email", "image_profile", "bio"], where: { name: query } })
+        res.json({ succes: true, data: users })
     } catch (error)
     {
-        console.log(error)
+        res.status(404).send({ succes: false, msg: "data tidak ditemukan" })
     }
 }
 
@@ -49,7 +49,7 @@ export const registerUsers = async (req, res) =>
         const existingUser = await Users.findOne({ where: { name: name } });
         if (existingUser)
         {
-            return res.status(400).json({ succes: false, msg: "UserName Sudah Ada Mohon Cari Nama Yang Lain" })
+            return res.status(400).json({ succes: false, msg: "UserName dan email Sudah Ada Mohon Cari Nama Yang Lain" })
         }
         await Users.create({
             name: name,
@@ -116,6 +116,29 @@ export const LoginUsers = async (req, res) =>
 }
 
 
+export const ForgotPassword = async (req, res) =>
+{
+    const { name, email, newPassword, newConfPassword } = req.body;
+    if (!name || !email || !newPassword || !newConfPassword) return res.status(400).json({ succes: false, msg: "Tolong Isi Yang Benar Tidak boleh ada yang kosong" })
+    if (newPassword !== newConfPassword) return res.status(400).json({ succes: false, msg: "Password dan confirm Password Tidak Sama" });
+    const salt = await bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(newPassword, salt);
+
+    try
+    {
+        const users = await Users.findOne({ where: { name: name, email: email } })
+        if (!users) return res.status(400).send({ succes: false, msg: "name atau email Tidak ditemukan" })
+
+        const _id = users.id;
+
+        await Users.update({ password: hashPassword }, { where: { id: _id } })
+        res.json({ succes: true, msg: "data Berhasil TerUpdate" })
+    } catch (error)
+    {
+        res.status(500).send({ succes: false, msg: "data tidak ditemukan" })
+    }
+}
+
 export const LogoutUsers = async (req, res) =>
 {
     const refreshToken = req.cookies.token
@@ -134,4 +157,29 @@ export const LogoutUsers = async (req, res) =>
     });
     res.clearCookie('token');
     return res.sendStatus(200);
-} 
+}
+
+export const UsersUpdate = async (req, res) =>
+{
+    const _id = req.params.id
+    const img_update = req.query.img
+    try
+    {
+        await Users.update({ image_profile: img_update }, { where: { id: _id } })
+        res.status(200).send({
+            succes: true,
+            msg: "data berhasil di Update",
+            data: {
+                id: _id,
+                image_profile: img_update
+            }
+        })
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "data tidak berhasil Di Update",
+            error: error
+        })
+    }
+}

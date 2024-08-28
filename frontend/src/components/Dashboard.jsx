@@ -2,6 +2,7 @@ import React,{useState, useEffect} from 'react'
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from"react-router-dom"
+import instance from '../libs/axios/instance';
 
 const Dashboard = () => {
   const [name, setName] = useState('');
@@ -10,46 +11,14 @@ const Dashboard = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    refreshToken()
+    getUsers()
   },[])
 
-  const refreshToken = async() => {
-    try {
-      const response = await axios.get('http://localhost:3100/token', { withCredentials: true })
-      setToken(response.data.data.accesstToken)
-      const decode = jwtDecode(response.data.data.accesstToken)
-      setName(decode.name)
-      console.log(decode)
-      setExpire(decode.exp)
-      localStorage.setItem("user_accessToken", response.data.data.accesstToken)
-    } catch (error) {
-      if(error.response) {
-        return navigate("/login")
-      }
-    }
-  }
-
-  const axiosJwt = axios.create()
-
-  axiosJwt.interceptors.request.use(async (config) => {
-    const currentDate = new Date();
-    if(expire * 1000 < currentDate.getTime()){
-      const response = await axios.get('http://localhost:3100/token', { withCredentials: true })
-      config.headers.Authorization = `Barer  ${response.data.data.accesstToken}`;
-      setToken(response.data.data.accesstToken)
-      localStorage.setItem("Users_refreshToken", response)
-      const decode = jwtDecode(response.data.data.accesstToken)
-      setName(decode.name)
-      setExpire(decode.exp)
-    }
-    return config;
-  } , (error) => {
-    return Promises.reject(error);
-  })
 
   const getUsers = async () => {
+    const token = localStorage.getItem("usersAccessToken")
     try {
-      const respons = await axiosJwt.get("http://localhost:3100/users", {
+      const respons = await instance.get("http://localhost:3100/users", {
         headers: {
           Authorization: `Barer  ${token}`
         }

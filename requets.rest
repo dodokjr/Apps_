@@ -1,12 +1,14 @@
 get http://localhost:3100/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiZW1haWwiOiJkb2Rva2pyMTJAZ21haWwuY29tIiwiaWF0IjoxNzIzMzg3NDM3LCJleHAiOjE3MjM0NzM4Mzd9.iTWeXtVd_l_wk-Y3_VgZgYIAkVIMAgINHkLtIkXjy20
+Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiaWF0IjoxNzI0NDgwNjAxLCJleHAiOjE3MjQ0ODA2NjF9.1dBBchAX2R7t5rkXob2PI9bBYPtpBIQsYBnrbraScaM
+
 ###
+
 POST http://localhost:3100/users
 Content-Type: application/json
 
 {
-    "name": "admin122",
-    "email": "admin1@gmail.com",
+    "name": "dodokjr",
+    "email": "dodokjr12@gmail.com",
     "password": "1234567",
     "confPassword": "1234567",
     "pin": "12345"
@@ -24,7 +26,23 @@ Content-Type: application/json
 }
 
 ###
+PUT  http://localhost:3100/users/update/1?img=https://i.pinimg.com/736x/27/2c/3c/272c3c10cbe4dce87e86c20bf4d4cffa.jpg
+Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiaWF0IjoxNzI0ODIwNTQyLCJleHAiOjE3MjQ4MjA2MDJ9.CK3ez0MyEZ9N49MToSuiJu9ZFZ8LptfkukCEKr0BkwU
+###
 GET http://localhost:3100/token
 
+###
+GET http://localhost:3100/users/profile?name=dodokjr
+Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiaWF0IjoxNzI0ODE5Mjg4LCJleHAiOjE3MjQ4MTkzNDh9.Abx4LjvXKsTAi0jOLiLPP5dYWKJlERVjL_NndvGnLP4
+
+###
+PUT http://localhost:3100/forgotpassword
+Content-Type: application/json
+
+{
+    "name": "dodokjr",
+    "newPassword": "12345",
+    "newConfPassword": "12345"
+}
 ###
 DELETE http://localhost:3100/logout

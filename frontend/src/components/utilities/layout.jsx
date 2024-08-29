@@ -3,7 +3,7 @@ import Navbar from './Navbar'
 import Sidebar from './SideBar'
 
 export default function Layout({children}) {
-  const userAccounts = localStorage.getItem("usersName")
+  const userAccounts = localStorage.getItem("users")
   return (
     <>
   <main className='App w-full '>

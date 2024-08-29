@@ -2,8 +2,12 @@ import { Sequelize } from "sequelize"
 import db from "../config/db.js"
 
 const { DataTypes } = Sequelize;
-
 const Users = db.define('users', {
+    userId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     name: {
         type: DataTypes.STRING
     },
@@ -19,6 +23,9 @@ const Users = db.define('users', {
     image_profile: {
         type: DataTypes.STRING
     },
+    image: {
+        type: DataTypes.STRING
+    },
     bio: {
         type: DataTypes.STRING
     },
@@ -29,4 +36,4 @@ const Users = db.define('users', {
     freezeTableName: true
 })
 
-export default Users;
+export default Users

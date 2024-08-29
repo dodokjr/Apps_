@@ -21,7 +21,7 @@ Content-Type: application/json
 {
     "name": "dodokjr",
     "email": "dodokjr12@gmail.com",
-    "password": "1234567",
+    "password": "123456",
     "pin": "12345"
 }
 
@@ -41,8 +41,14 @@ Content-Type: application/json
 
 {
     "name": "dodokjr",
-    "newPassword": "12345",
-    "newConfPassword": "12345"
+    "email": "dodokjr12@gmail.com",
+    "newPassword": "123456",
+    "newConfPassword": "123456"
 }
+###
+PUT http://localhost:3100/users/update/edit
+Content-Type: application/json
+
+
 ###
 DELETE http://localhost:3100/logout

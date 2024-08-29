@@ -5,11 +5,13 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import instance from '../../../libs/axios/instance';
 import { ModalFollowers, ModalFollowing } from '../../../components/profile/modal/modal';
+import { ButtonFollow } from '../../../components/profile/assets/ButtonAx';
 
 export default function ProfileApps() {
   const {name} = useParams()
   const [res, setRes] = useState('')
   const navigate = useNavigate()
+  const comName = localStorage.getItem("users")
   
   useEffect(() => {
     getUsers()
@@ -47,6 +49,8 @@ export default function ProfileApps() {
             </div>
         </div>
       </div>
+
+            <ButtonFollow name={name} comName={comName}/>
             <div className='grid-cols-4 gap-3'>
             <span>Post 100 </span>
             <a href='#' onClick={() => document.getElementById("modalFollowers").showModal()}>Followers 100 </a>

@@ -1,7 +1,10 @@
-import Users from "../models/usersModel.js"
+import Users from "../models/UsersModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { QueryTypes, where } from "sequelize";
+import path from "path"
+import fs from "fs"
+import multer from "multer"
+import { fileTypeFromFile } from "file-type"
 
 export const getUsers = async (req, res) =>
 {
@@ -31,17 +34,35 @@ export const getDashbordUsers = async (req, res) =>
     }
 }
 
+export async function verifyUser(req, res, next)
+{
+    try
+    {
+
+        const { username } = req.method == "GET" ? req.query : req.body;
+
+        // check the user existance
+        let exist = await Users.findOne({ where: username });
+        if (!exist) return res.status(404).send({ error: "Can't find User!" });
+        next();
+
+    } catch (error)
+    {
+        return res.status(404).send({ error: "Authentication Error" });
+    }
+}
 
 
 export const registerUsers = async (req, res) =>
 {
     const { name, email, password, confPassword, pin } = req.body;
+    // Users Validasi
     if (!name || !email || !password || !confPassword || !pin) return res.status(400).json({ succes: false, msg: "Tolong Isi Yang Benar Tidak boleh ada yang kosong" })
     if (password !== confPassword) return res.status(400).json({ succes: false, msg: "Password dan confirm Password Tidak Sama" });
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt);
     const hashPin = await bcrypt.hash(pin, salt);
-    const image_profile = "https://i.pinimg.com/170x/56/2e/be/562ebed9cd49b9a09baa35eddfe86b00.jpg"
+    const image_profile = "  "
     const bio = "Not Bio Nyet";
     try
     {
@@ -57,6 +78,7 @@ export const registerUsers = async (req, res) =>
             password: hashPassword,
             pin: hashPin,
             image_profile: image_profile,
+            image: image_profile,
             bio: bio
         });
         res.json({ succes: true, msg: "Register Berhasil Ditambahkan" })
@@ -159,27 +181,97 @@ export const LogoutUsers = async (req, res) =>
     return res.sendStatus(200);
 }
 
-export const UsersUpdate = async (req, res) =>
+
+export const EditProfile = async (req, res) =>
 {
-    const _id = req.params.id
-    const img_update = req.query.img
+    const _id = req.body._id;
+    const name = req.body.name;
+    const bio_update = req.body.bio;
+    if (!_id || !bio_update) return res.status(400).send({
+        succes: false,
+        msg: "data error"
+    })
+
     try
     {
-        await Users.update({ image_profile: img_update }, { where: { id: _id } })
+        const data = await Users.update({ name: name, bio: bio_update }, { where: { id: _id } })
         res.status(200).send({
             succes: true,
-            msg: "data berhasil di Update",
-            data: {
-                id: _id,
-                image_profile: img_update
-            }
+            msg: "data Berhasil Terupload",
+            data: { r: data }
         })
     } catch (error)
     {
         res.status(500).send({
             succes: false,
-            msg: "data tidak berhasil Di Update",
+            msg: "data gagal Terupload",
             error: error
         })
     }
+}
+
+export const UsersUpdate = async (req, res) =>
+{
+    const _id = await Users.findOne({
+        where: {
+            id: req.body.id
+        }
+    })
+    if (!_id) return res.status(404).send({ succes: false, msg: "data Not Found" })
+
+    let fileName = "";
+    if (req.filrs === null)
+    {
+        fileName = _id.image;
+    } else
+    {
+        const img_update = req.files.file
+        const fileSize = img_update.data.length;
+        const ext = Path.extname(img_update.name);
+        const url = `${req.protocol}://${req.get("host")}/images/${fileName}`;
+        fileName = file.md5 + ext;
+        const allowType = [".jpg", ".png", ".jpeg"];
+
+        if (!allowType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
+        if (fileSize > 5000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
+
+        file
+    }
+}
+
+
+
+export const UpdateImg = async (req, res) =>
+{
+    const name = req.query.name;
+    if (!name) return res.sendStatus(500);
+    const _id = await Users.findOne({
+        where: {
+            name: name
+        }
+    })
+    if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
+    const file = req.files.file;
+    const fileSize = file.data.length;
+    const ext = path.extname(file.name);
+    const fileName = file.md5 + ext;
+    const url = `${req.protocol}://${req.get("host")}/photoProfile/${fileName}`;
+    const allowedType = ['.png', '.jpg', '.jpeg'];
+
+    if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
+    if (fileSize > 5000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
+
+    file.mv(`./uploads/photoProfile/${fileName}`, async (err) =>
+    {
+        if (err) return res.status(500).json({ msg: err.message });
+        try
+        {
+            await Users.update({ image_profile: url, image: fileName }, { where: { id: _id.id } });
+            res.status(201).json({ msg: "Product Created Successfuly" });
+        } catch (error)
+        {
+            console.log(error.message);
+        }
+    })
+
 }

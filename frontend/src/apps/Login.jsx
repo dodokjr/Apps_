@@ -17,7 +17,7 @@ export default function Login() {
                 password: password,
                 pin: pin
             }, { withCredentials: true })
-            localStorage.setItem("usersName", name)
+            localStorage.setItem("users", name)
             return Navigate(`/${name}`)
         } catch (error) {
             if(error.response){

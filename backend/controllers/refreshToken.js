@@ -1,4 +1,4 @@
-import Users from "../models/usersModel.js";
+import Users from "../models/UsersModel.js";
 import jwt from "jsonwebtoken"
 
 export const refreshToken = async (req, res) =>

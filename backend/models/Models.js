@@ -1,5 +1,4 @@
 import { Sequelize } from "sequelize";
-import { MsSqlDialect } from '@sequelize/mssql';
 import db from "../config/db.js"
 import Users from "./UsersModel.js";
 

@@ -1,22 +1,48 @@
-import Users from "../models/UsersModel.js"
+import Users from "../models/UsersModel.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import path from "path"
 import fs from "fs"
 import multer from "multer"
 import { fileTypeFromFile } from "file-type"
+import { GetUsers, userLogin, usersCreate, usersFindAll, usersFindOne } from "../utilities/helper.js"
 
 export const getUsers = async (req, res) =>
 {
+    const user = await GetUsers()
+    if (user)
+    {
+        res.status(200).send({
+            succes: true,
+            msg: user
+        })
+    } else
+    {
+        res.status(400).send({
+            succes: false,
+            msg: "error"
+        })
+    }
+}
+
+export const getSearchUsers = async (req, res) =>
+{
+    const name = req.query.name
     try
     {
-        const users = await Users.findAll({
-            attributes: ['id', 'name', 'email', 'image_profile', 'bio']
-        });
-        res.json(users)
+        const r = await Users.findOne(
+            { where: { name: name } }
+        )
+        res.status(200).send({
+            succes: true,
+            msg: r
+        })
     } catch (error)
     {
-        console.log(error)
+        res.status(500).send({
+            succes: false,
+            msg: error
+        })
     }
 }
 
@@ -26,7 +52,7 @@ export const getDashbordUsers = async (req, res) =>
 
     try
     {
-        const users = await Users.findOne({ attributes: ["id", "name", "email", "image_profile", "bio"], where: { name: query } })
+        const users = await Users.findOne({ attributes: ["userId", "name", "email", "image_profile", "bio"], where: { name: query } })
         res.json({ succes: true, data: users })
     } catch (error)
     {
@@ -67,20 +93,12 @@ export const registerUsers = async (req, res) =>
     try
     {
         // Chek user in db
-        const existingUser = await Users.findOne({ where: { name: name } });
+        const existingUser = await usersFindOne(name)
         if (existingUser)
         {
             return res.status(400).json({ succes: false, msg: "UserName dan email Sudah Ada Mohon Cari Nama Yang Lain" })
         }
-        await Users.create({
-            name: name,
-            email: email,
-            password: hashPassword,
-            pin: hashPin,
-            image_profile: image_profile,
-            image: image_profile,
-            bio: bio
-        });
+        await usersCreate(name, email, hashPassword, hashPin, image_profile, bio)
         res.json({ succes: true, msg: "Register Berhasil Ditambahkan" })
     } catch (error)
     {
@@ -93,20 +111,16 @@ export const LoginUsers = async (req, res) =>
 {
     try
     {
-        const existingUser = await Users.findOne({ where: { name: req.body.name } });
+        const existingUser = await usersFindOne(req.body.name)
         if (!existingUser)
         {
             return res.status(400).send({ succes: false, msg: "userName dan Email Tidak Ada mohon register dulu Ya" })
         }
-        const user = await Users.findAll({
-            where: {
-                name: req.body.name,
-            }
-        });
+        const user = await usersFindAll(req.body.name)
         const match = await bcrypt.compare(req.body.password, user[0].password)
         const pinmatch = await bcrypt.compare(req.body.pin, user[0].pin)
         if (!match || !pinmatch) return res.status(400).json({ succes: false, msg: "pin atau password Tidak Sama" })
-        const userId = user[0].id;
+        const userId = user[0].userId;
         const name = user[0].name;
         const accesstToken = jwt.sign({ userId, name }, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: "60s"
@@ -114,11 +128,7 @@ export const LoginUsers = async (req, res) =>
         const refreshToken = jwt.sign({ userId, name }, process.env.REFRESH_TOKEN_SECRET, {
             expiresIn: "1d"
         })
-        await Users.update({ refersh_token: refreshToken }, {
-            where: {
-                id: userId
-            }
-        });
+        await Users.update({ refersh_token: refreshToken }, { where: { userId: userId } })
         res.cookie("token", refreshToken, {
             httpOnly: true,
             sameSite: 'none',
@@ -133,27 +143,27 @@ export const LoginUsers = async (req, res) =>
 
     } catch (error)
     {
-        res.status(404).json({ succes: false, msg: "name atau email Tidak Di Temukan" })
+        res.status(500).json({ succes: false, msg: "error", err: error })
     }
 }
 
 
 export const ForgotPassword = async (req, res) =>
 {
-    const { name, email, newPassword, newConfPassword } = req.body;
-    if (!name || !email || !newPassword || !newConfPassword) return res.status(400).json({ succes: false, msg: "Tolong Isi Yang Benar Tidak boleh ada yang kosong" })
+    const { name, newPassword, newConfPassword } = req.body;
+    if (!name || !newPassword || !newConfPassword) return res.status(400).json({ succes: false, msg: "Tolong Isi Yang Benar Tidak boleh ada yang kosong" })
     if (newPassword !== newConfPassword) return res.status(400).json({ succes: false, msg: "Password dan confirm Password Tidak Sama" });
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(newPassword, salt);
 
     try
     {
-        const users = await Users.findOne({ where: { name: name, email: email } })
+        const users = await usersFindOne(name)
         if (!users) return res.status(400).send({ succes: false, msg: "name atau email Tidak ditemukan" })
 
-        const _id = users.id;
+        const _id = users.userId;
 
-        await Users.update({ password: hashPassword }, { where: { id: _id } })
+        await Users.update({ password: hashPassword }, { where: { userId: _id } })
         res.json({ succes: true, msg: "data Berhasil TerUpdate" })
     } catch (error)
     {
@@ -171,10 +181,10 @@ export const LogoutUsers = async (req, res) =>
         }
     });
     if (!user[0]) return res.sendStatus(204);
-    const userId = user[0].id;
+    const userId = user[0].userId;
     await Users.update({ refersh_token: null }, {
         where: {
-            id: userId
+            userId: userId
         }
     });
     res.clearCookie('token');
@@ -210,68 +220,63 @@ export const EditProfile = async (req, res) =>
     }
 }
 
-export const UsersUpdate = async (req, res) =>
+
+export const SaveImage = async (req, res) =>
 {
-    const _id = await Users.findOne({
-        where: {
-            id: req.body.id
-        }
-    })
-    if (!_id) return res.status(404).send({ succes: false, msg: "data Not Found" })
-
-    let fileName = "";
-    if (req.filrs === null)
-    {
-        fileName = _id.image;
-    } else
-    {
-        const img_update = req.files.file
-        const fileSize = img_update.data.length;
-        const ext = Path.extname(img_update.name);
-        const url = `${req.protocol}://${req.get("host")}/images/${fileName}`;
-        fileName = file.md5 + ext;
-        const allowType = [".jpg", ".png", ".jpeg"];
-
-        if (!allowType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
-        if (fileSize > 5000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
-
-        file
-    }
-}
-
-
-
-export const UpdateImg = async (req, res) =>
-{
-    const name = req.query.name;
+    const name = req.body.name;
     if (!name) return res.sendStatus(500);
     const _id = await Users.findOne({
         where: {
             name: name
         }
-    })
+    });
+    if (!_id)
+    {
+        return res.status(400).send({ succes: false, msg: "userName Tidak Ada" })
+    }
     if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
     const file = req.files.file;
     const fileSize = file.data.length;
     const ext = path.extname(file.name);
-    const fileName = file.md5 + ext;
+    const fileName = Date.now() + file.md5 + ext;
     const url = `${req.protocol}://${req.get("host")}/photoProfile/${fileName}`;
-    const allowedType = ['.png', '.jpg', '.jpeg'];
+    const allowedType = ['.png', '.jpg', '.jpeg', '.jfif', '.gif'];
 
     if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
-    if (fileSize > 5000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
+    if (fileSize > 500000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
 
     file.mv(`./uploads/photoProfile/${fileName}`, async (err) =>
     {
         if (err) return res.status(500).json({ msg: err.message });
         try
         {
-            await Users.update({ image_profile: url, image: fileName }, { where: { id: _id.id } });
-            res.status(201).json({ msg: "Product Created Successfuly" });
+            const user = await usersFindAll(req.body.name)
+            const userId = user[0].userId;
+            const name = user[0].name;
+            const accesstToken = jwt.sign({ userId, name }, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: "60s"
+            });
+            const refreshToken = jwt.sign({ userId, name }, process.env.REFRESH_TOKEN_SECRET, {
+                expiresIn: "1d"
+            });
+            // Update PRofile
+            await Users.update({ image_profile: url, image: fileName }, { where: { userId: _id.userId } });
+            await Users.update({ refersh_token: refreshToken }, { where: { userId: userId } })
+            res.cookie("token", refreshToken, {
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+                maxAge: 1 * 60 * 60 * 1000,
+            })
+            res.status(200).send({
+                succes: true,
+                msg: "Login Berhasil",
+                data: { accesstToken }
+            })
+            res.status(200).json({ succes: true, msg: "Successfuly" });
         } catch (error)
         {
             console.log(error.message);
         }
     })
-
 }

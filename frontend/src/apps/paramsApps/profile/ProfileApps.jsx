@@ -28,7 +28,6 @@ export default function ProfileApps() {
       }, { withCredentials: true })
       setRes(res.data.data)
       console.log(res.data.data)
-      localStorage.setItem("UserId", res.data.data.id)
     } catch (error) {
       navigate("/login")
     }

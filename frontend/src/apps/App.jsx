@@ -12,6 +12,7 @@ import "../assets/css/App.css"
 import SettingProfile from './paramsApps/profile/SettingProfile.jsx';
 import Forgotpassword from './forgotpassword.jsx';
 import EditProfile from './paramsApps/profile/EditProfile.jsx';
+import Follow from './Follow.jsx';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register/>,
+  },
+  {
+    path: "/follow/:name",
+    element: <Follow/>,
   },
   {
     path: "/:name",

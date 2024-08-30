@@ -22,7 +22,8 @@ export default function Register() {
                 confPassword: comfPassword,
                 pin: pin
             })
-            return Navigate("/login");
+            localStorage.setItem("goRegister", true)
+            return Navigate(`/follow/${name}`);
         } catch (error) {
             if(error.response){
                 setMsg(error.response.data.msg)
@@ -146,7 +147,7 @@ export default function Register() {
             </span>
             <span class="absolute left-0 pl-2.5 -translate-x-12 group-hover:translate-x-0 ease-out duration-200">
             </span>
-            <span class="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-white">Button Text</span>
+            <span class="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-white">Register</span>
           </button>
           </div>
         </form>

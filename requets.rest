@@ -1,4 +1,5 @@
-get http://localhost:3100/users
+
+GET http://localhost:3100/users
 Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiaWF0IjoxNzI0NDgwNjAxLCJleHAiOjE3MjQ0ODA2NjF9.1dBBchAX2R7t5rkXob2PI9bBYPtpBIQsYBnrbraScaM
 
 ###
@@ -7,8 +8,8 @@ POST http://localhost:3100/users
 Content-Type: application/json
 
 {
-    "name": "dodokjr",
-    "email": "dodokjr12@gmail.com",
+    "name": "dodokjr3",
+    "email": "dodokjr3@gmail.com",
     "password": "1234567",
     "confPassword": "1234567",
     "pin": "12345"
@@ -19,9 +20,9 @@ POST http://localhost:3100/login
 Content-Type: application/json
 
 {
-    "name": "dodokjr",
-    "email": "dodokjr12@gmail.com",
-    "password": "123456",
+    "name": "dodokjr2",
+    "email": "dodokjr2@gmail.com",
+    "password": "1234567",
     "pin": "12345"
 }
 
@@ -49,6 +50,31 @@ Content-Type: application/json
 PUT http://localhost:3100/users/update/edit
 Content-Type: application/json
 
+{
+    "_id": 1,
+    "name": "dodokjr",
+    "img": "https://i.pinimg.com/736x/27/2c/3c/272c3c10cbe4dce87e86c20bf4d4cffa.jpg",
+    "bio": "Hello World"
+}
 
+###
+POST http://localhost:3100/registerMail
+Content-Type: application/json
+
+{
+    "uname" : "test",
+    "uemail" : "ffikri604@gmail.com",
+    "text": "612929"
+}
+###
+GET http://localhost:3100/otp/g
+
+###
+GET http://localhost:3100/otp/v
+Content-Type: application/json
+
+{
+    "code" : "612929"
+}
 ###
 DELETE http://localhost:3100/logout

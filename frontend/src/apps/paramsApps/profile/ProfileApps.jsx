@@ -11,19 +11,19 @@ export default function ProfileApps() {
   const {name} = useParams()
   const [res, setRes] = useState('')
   const navigate = useNavigate()
-  const comName = localStorage.getItem("users")
+  const comName = localStorage.getItem("UserName")
   
   useEffect(() => {
     getUsers()
   }, [])
 
   const getUsers = async () => {
-    const accessToken = localStorage.getItem("UsersRefreshToken")
+    const accessToken = localStorage.getItem("usersToken")
 
     try {
-      const res = await instance.get(`http://localhost:3100/users/profile?name=${name}`, {
+      const res = await axios.get(`http://localhost:3100/v1/f/users/${name}`, {
         headers: {
-          Authorization: `Barer  ${accessToken}`
+          Authorization: `Barer ${accessToken}`
         }
       }, { withCredentials: true })
       setRes(res.data.data)

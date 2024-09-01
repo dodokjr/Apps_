@@ -12,12 +12,14 @@ export default function Login() {
     const Login = async(e) => {
         e.preventDefault();
         try {
-           const res = await axios.post('http://localhost:3100/login', {
+           const res = await axios.post('http://localhost:3100/v1/f/login', {
                 name: name,
                 password: password,
                 pin: pin
             }, { withCredentials: true })
-            localStorage.setItem("users", name)
+            localStorage.setItem("usersToken", res.data.acessToken)
+            localStorage.setItem("UserName", name)
+            console.log(res.data)
             return Navigate(`/${name}`)
         } catch (error) {
             if(error.response){

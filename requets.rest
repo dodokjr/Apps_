@@ -4,14 +4,14 @@ Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5h
 
 ###
 
-POST http://localhost:3100/users
+POST http://localhost:3100/v1/f/users
 Content-Type: application/json
 
 {
     "name": "dodokjr3",
     "email": "dodokjr3@gmail.com",
-    "password": "1234567",
-    "confPassword": "1234567",
+    "password": "Ruwet133#",
+    "confPassword": "Ruwet133#",
     "pin": "12345"
 }
 

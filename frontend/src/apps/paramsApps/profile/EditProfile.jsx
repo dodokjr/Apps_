@@ -9,49 +9,48 @@ import axios from 'axios'
 
 export default function EditProfile() {
     const [res, setRes] = useState('')
-    const [input, setInput] = useState(res.bio)
-    const [name, setName] = useState(res.name)
+    // const [input, setInput] = useState(res.bio)
+    // const [name, setName] = useState(res.name)
     const [file, setFile] = useState(null)
     const [updateImageMsg, setUpdateImageMsg] = useState('')
 
   const navigate = useNavigate()
-  const comName = localStorage.getItem("users")
+  const comName = localStorage.getItem("UserName")
   
   useEffect(() => {
     getUsers()
   }, [])
 
   const getUsers = async () => {
-    const accessToken = localStorage.getItem("UsersRefreshToken")
+    const accessToken = localStorage.getItem("usersToken")
 
     try {
-      const res = await instance.get(`http://localhost:3100/users/profile?name=${comName}`, {
+      const res = await axios.get(`http://localhost:3100/v1/f/users/${comName}`, {
         headers: {
-          Authorization: `Barer  ${accessToken}`
+          Authorization: `Barer ${accessToken}`
         }
       }, { withCredentials: true })
       setRes(res.data.data)
       console.log(res.data.data)
-      localStorage.setItem("UserId", res.data.data.id)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const heandelSubmit = async (e) => {
-    console.log(file ,name, input)
-    e.preventDefault();
-    try {
-        await axios.put("http://localhost:3100/users/update/edit", {
-            _id: res.id,
-            name: name,
-            bio: input
-        })
+  // const heandelSubmit = async (e) => {
+  //   console.log(file ,name, input)
+  //   e.preventDefault();
+  //   try {
+  //       await axios.put("http://localhost:3100/users/update/edit", {
+  //           _id: res.id,
+  //           name: name,
+  //           bio: input
+  //       })
 
-    } catch (error) {
-        console.log(error)
-    }
-  }
+  //   } catch (error) {
+  //       console.log(error)
+  //   }
+  // }
 
   const heandelSubmitUpdateImage = async (e) => {
     e.preventDefault()
@@ -60,7 +59,7 @@ export default function EditProfile() {
     const formData = new FormData();
     formData.append('file', file);
 
-    axios.post(`http://localhost:3100/update?name=${comName}`, formData, {
+    axios.post(`http://localhost:3100/v1/f/pp/${res.userId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

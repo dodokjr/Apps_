@@ -5,11 +5,6 @@ import { FaBars, FaSearch } from "react-icons/fa";
 import { ModalSearch } from './modal/modal';
 
 export default function Navbar({
-  heading,
-  paragraph,
-  linkName,
-  linkUrl="#",
-  imgSrc,
   data
 }) {
   return (

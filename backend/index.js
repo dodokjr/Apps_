@@ -6,6 +6,7 @@ import cors from "cors"
 import dbApps from "./src/config/db.js"
 import Users from "./src/models/usersModel.js"
 import appMiddleware from "./src/middleware/index.js"
+import usersPost from "./src/models/usersPostModels.js"
 
 
 
@@ -26,6 +27,7 @@ try
 {
     await dbApps.authenticate();
     console.log("database Koneksi");
+    await usersPost.sync()
 } catch (error)
 {
     console.error(error)

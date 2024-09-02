@@ -2,8 +2,8 @@ import nodemailer from "nodemailer"
 import Mailgen from "mailgen";
 
 const base_url = "http://localhost:3100/v1/f/activate/";
-
-
+const base_url_forgotpassword = "http://localhost:5173/forgotpassword/"
+const base_url_S = "http://localhost:5173/"
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
@@ -60,51 +60,45 @@ const contentPwd = (email, password) =>
     };
 };
 
-const thameLoginMail = (email, name) =>
-{
-    const thame = MailGenerator.generate({
-        body: {
-            name: name,
-            intro: 'Welcome to Daily Tuition! We\'re very excited to have you on board.',
-            action: {
-                instructions: 'To get started with Mailgen, please click here:',
-                button: {
-                    color: '#22BC66', // Optional action button color
-                    text: 'Confirm your account',
-                    link: 'http://localhost:5173/'
-                }
-            },
-            outro: 'Need help, or have questions? Just reply to this email, we\'d love to help.'
-        }
-    })
 
+const contentfg = (email, token) =>
+{
     return {
-        from: "testing12@gmail.com",
+        from: "testing@gmail.com",
         to: email,
-        subject: "Hello everyOne Happy Your Login Apps",
+        subject: "Forgot Password",
         html:
-            "<h3>Happy Your Apps</h3>"
-    }
-}
+            "<h3>Your Reset password is :</h3>" +
+            "<table>" +
+            "<tr><td>Email :</td><td>" +
+            email +
+            "</td></tr>" +
+            "<tr><td>Password :</td><td>" +
+            "<a href='" +
+            base_url_forgotpassword +
+            "/" +
+            token +
+            "'>Reset Password</a>" +
+            "</td></tr>" +
+            "</table>",
+    };
+};
 
-const sendLoginMail = (email, name) =>
+const contentsucces = (email, token) =>
 {
-    return new Promise((resolve, reject) =>
-    {
-        transporter.sendMail(thameLoginMail(email, name) = (err, info) =>
-        {
-            if (err)
-            {
-                console.log(err);
-                resolve(false);
-            } else
-            {
-                console.log("Email sent: " + info.response);
-                resolve(true);
-            }
-        })
-    })
-}
+    return {
+        from: "testing@gmail.com",
+        to: email,
+        subject: "reset Password Succes",
+        html:
+            "<h3>Your Reset password is Succes</h3>" +
+            "<a href='" +
+            base_url_S +
+            "/login?userId=" +
+            token +
+            "'>Succers Reset Password</a>",
+    };
+};
 
 
 const sendMail = (email, token) =>
@@ -145,4 +139,43 @@ const sendPassword = (email, password) =>
     });
 };
 
-export { sendMail, sendPassword, sendLoginMail };
+
+const sendforgot = (email, token) =>
+{
+    return new Promise((resolve, reject) =>
+    {
+        transporter.sendMail(contentfg(email, token), function (error, info)
+        {
+            if (error)
+            {
+                console.log(error);
+                resolve(false);
+            } else
+            {
+                console.log("Email sent: " + info.response);
+                resolve(true);
+            }
+        });
+    });
+};
+
+const sendSucces = (email, token) =>
+{
+    return new Promise((resolve, reject) =>
+    {
+        transporter.sendMail(contentsucces(email, token), function (error, info)
+        {
+            if (error)
+            {
+                console.log(error);
+                resolve(false);
+            } else
+            {
+                console.log("Email sent: " + info.response);
+                resolve(true);
+            }
+        });
+    });
+};
+
+export { sendMail, sendPassword, sendforgot, sendSucces };

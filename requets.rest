@@ -1,80 +1,60 @@
 
-GET http://localhost:3100/users
-Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiaWF0IjoxNzI0NDgwNjAxLCJleHAiOjE3MjQ0ODA2NjF9.1dBBchAX2R7t5rkXob2PI9bBYPtpBIQsYBnrbraScaM
-
+GET http://localhost:3100/v1/f/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwYTM5Y2E2NC02MDZhLTRmNDItOWMyMS00MWY3MGJmYjA4MjQiLCJuYW1lIjoiRG9kb2tqcjEyMzQiLCJlbWFpbCI6ImZmaWtyaTY0QGdtYWlsLmNvbSIsImltYWdlX3Byb2ZpbGUiOiJodHRwOi8vbG9jYWxob3N0OjMxMDAvcGhvdG9Qcm9maWxlLzE3MjUyMDE4OTYwNDRlODE5Njg0ZTE2NzViODUwMWE3ZjE4NTdhYjI0YWFiYi5naWYiLCJpYXQiOjE3MjUyNjAyNTksImV4cCI6MTcyNTI2MjA1OX0.WmcxvQU0M5ZUlUA3k3MKW_NQNJhAE-F8GEmC5HgcK9U
 ###
-
+# Register
 POST http://localhost:3100/v1/f/users
 Content-Type: application/json
 
 {
-    "name": "dodokjr3",
-    "email": "dodokjr3@gmail.com",
+    "name": "Dodokjr1234",
+    "email": "ffikri64@gmail.com",
     "password": "Ruwet133#",
-    "confPassword": "Ruwet133#",
+    "conformPassword": "Ruwet133#",
     "pin": "12345"
 }
 
 ###
-POST http://localhost:3100/login
+# Login
+POST http://localhost:3100/v1/f/login
 Content-Type: application/json
 
 {
-    "name": "dodokjr2",
-    "email": "dodokjr2@gmail.com",
-    "password": "1234567",
+    "name": "dodokjr1234",
+    "password": "Seruni133#",
     "pin": "12345"
 }
 
 ###
-PUT  http://localhost:3100/users/update/1?img=https://i.pinimg.com/736x/27/2c/3c/272c3c10cbe4dce87e86c20bf4d4cffa.jpg
-Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiaWF0IjoxNzI0ODIwNTQyLCJleHAiOjE3MjQ4MjA2MDJ9.CK3ez0MyEZ9N49MToSuiJu9ZFZ8LptfkukCEKr0BkwU
-###
-GET http://localhost:3100/token
+# Get UserProfile
+GET http://localhost:3100/v1/f/users/dodokjr1234
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwYTM5Y2E2NC02MDZhLTRmNDItOWMyMS00MWY3MGJmYjA4MjQiLCJuYW1lIjoiRG9kb2tqcjEyMzQiLCJlbWFpbCI6ImZmaWtyaTY0QGdtYWlsLmNvbSIsImltYWdlX3Byb2ZpbGUiOiJodHRwOi8vbG9jYWxob3N0OjMxMDAvcGhvdG9Qcm9maWxlLzE3MjUxOTMwMjgwOTI5MDBkYmRjNTM3ZWZhZjUxMDVjMzJmYWM0Yzc0MTUwYi5qcGciLCJpYXQiOjE3MjUxOTQ5ODcsImV4cCI6MTcyNTE5Njc4N30.bEzz_E3_i3ZsHCXIBRClRMEj4GZ9xgDrxP9balW_p7U
 
 ###
-GET http://localhost:3100/users/profile?name=dodokjr
-Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb2Rva2pyIiwiaWF0IjoxNzI0ODE5Mjg4LCJleHAiOjE3MjQ4MTkzNDh9.Abx4LjvXKsTAi0jOLiLPP5dYWKJlERVjL_NndvGnLP4
-
-###
-PUT http://localhost:3100/forgotpassword
+# getResetPassword
+POST http://localhost:3100/v1/f/forgotpasword
 Content-Type: application/json
 
 {
-    "name": "dodokjr",
-    "email": "dodokjr12@gmail.com",
-    "newPassword": "123456",
-    "newConfPassword": "123456"
+    "name": "dodokjr1234"
 }
 ###
-PUT http://localhost:3100/users/update/edit
+# resetPassword
+POST http://localhost:3100/v1/f/forgotpasword/ffikri64@gmail.com
 Content-Type: application/json
 
 {
-    "_id": 1,
-    "name": "dodokjr",
-    "img": "https://i.pinimg.com/736x/27/2c/3c/272c3c10cbe4dce87e86c20bf4d4cffa.jpg",
-    "bio": "Hello World"
+    "password": "Seruni133#",
+    "conformPassword": "Seruni133#"
 }
-
 ###
-POST http://localhost:3100/registerMail
+# Auto Reset Password
+GET http://localhost:3100/v1/f/a/forgotpassword 
 Content-Type: application/json
 
 {
-    "uname" : "test",
-    "uemail" : "ffikri604@gmail.com",
-    "text": "612929"
+    "email" : "ffikri64@gmail.com"
 }
-###
-GET http://localhost:3100/otp/g
 
-###
-GET http://localhost:3100/otp/v
-Content-Type: application/json
-
-{
-    "code" : "612929"
-}
 ###
 DELETE http://localhost:3100/logout

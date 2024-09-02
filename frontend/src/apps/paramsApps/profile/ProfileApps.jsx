@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import instance from '../../../libs/axios/instance';
 import { ModalFollowers, ModalFollowing } from '../../../components/profile/modal/modal';
 import { ButtonFollow } from '../../../components/profile/assets/ButtonAx';
+import NotFound from '../../../components/utilities/Notfound';
 
 export default function ProfileApps() {
   const {name} = useParams()
@@ -33,6 +34,13 @@ export default function ProfileApps() {
     }
   }
 
+  if(!res) {
+    return (
+      <Layout>
+        <NotFound/>
+      </Layout>
+    )
+  }
   
   return (
     <Layout>
@@ -41,10 +49,10 @@ export default function ProfileApps() {
       <div className='grid grid-rows-3 grid-flow-col gap-4'>
       <div className=" row-span-3">
           <div className="avatar ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
-        <img src={res.image_profile} alt="" className='rounded-full'/>
+        <img src={res.image_profile && res.image_profile} alt="" className='rounded-full'/>
         </div>
             <div className='text-2xl row-span-2 col-span-2 p-2'>
-              <div>@{res.name}</div>
+              <div>@{res.name && res.name}</div>
             </div>
         </div>
       </div>
@@ -56,7 +64,7 @@ export default function ProfileApps() {
             <a href='#' onClick={() => document.getElementById("modalFollowing").showModal()}>Followed 20 </a>
             <span >Like 1k </span>
             </div>
-            <p>{res.bio}</p>
+            <p>{res.bio && res.bio}</p>
         </div>
         <div className='flex'>
         <ul className="menu bg-base-200 lg:menu-horizontal rounded-box">

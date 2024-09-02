@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import { useNavigate } from"react-router-dom"
+import { Link, useNavigate } from"react-router-dom"
 
 export default function Login() {
     const [name, setName] = useState('');
@@ -8,25 +8,30 @@ export default function Login() {
     const [pin, setPin] = useState('');
     const [msg, setMsg] = useState('');
     const Navigate = useNavigate();
-
+    
     const Login = async(e) => {
-        e.preventDefault();
-        try {
-           const res = await axios.post('http://localhost:3100/v1/f/login', {
-                name: name,
-                password: password,
-                pin: pin
-            }, { withCredentials: true })
-            localStorage.setItem("usersToken", res.data.acessToken)
-            localStorage.setItem("UserName", name)
-            console.log(res.data)
-            return Navigate(`/${name}`)
-        } catch (error) {
-            if(error.response){
-                setMsg(error.response.data.msg)
-            }
+      e.preventDefault();
+      try {
+        const res = await axios.post('http://localhost:3100/v1/f/login', {
+          name: name,
+          password: password,
+          pin: pin
+        }, { withCredentials: true })
+        localStorage.setItem("usersToken", res.data.acessToken)
+        localStorage.setItem("UserName", name)
+        console.log(res.data)
+        return Navigate(`/${name}`)
+      } catch (error) {
+        if(error.response){
+          setMsg(error.response.data.msg)
         }
+      }
     }
+    useEffect(() => {
+    if(localStorage.getItem("usersToken")) {
+      return Navigate(`/${name}`)
+    }
+  },[])
   return (
     <>
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -108,22 +113,22 @@ export default function Login() {
           </div>
 
           <div>
-          <button type="submit" href="#_" class="relative w-full inline-flex items-center justify-start py-3 pl-4 pr-12 overflow-hidden font-semibold text-indigo-600 transition-all duration-150 ease-in-out rounded hover:pl-10 hover:pr-6 bg-gray-50 group">
-            <span class="absolute bottom-0 left-0 w-full h-1 transition-all duration-150 ease-in-out bg-indigo-600 group-hover:h-full"></span>
-            <span class="absolute right-0 pr-4 duration-200 ease-out group-hover:translate-x-12">
+          <button type="submit" href="#_" className="relative w-full inline-flex items-center justify-start py-3 pl-4 pr-12 overflow-hidden font-semibold text-indigo-600 transition-all duration-150 ease-in-out rounded hover:pl-10 hover:pr-6 bg-gray-50 group">
+            <span className="absolute bottom-0 left-0 w-full h-1 transition-all duration-150 ease-in-out bg-indigo-600 group-hover:h-full"></span>
+            <span className="absolute right-0 pr-4 duration-200 ease-out group-hover:translate-x-12">
             </span>
-            <span class="absolute left-0 pl-2.5 -translate-x-12 group-hover:translate-x-0 ease-out duration-200">
+            <span className="absolute left-0 pl-2.5 -translate-x-12 group-hover:translate-x-0 ease-out duration-200">
             </span>
-            <span class="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-white">Button Text</span>
+            <span className="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-white">Button Text</span>
           </button>
           </div>
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not Accounts ?{' '}
-          <a href="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+          <Link to="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
             Register Now
-          </a>
+          </Link>
         </p>
       </div>
     </div>

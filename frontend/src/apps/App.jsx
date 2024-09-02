@@ -13,6 +13,8 @@ import SettingProfile from './paramsApps/profile/SettingProfile.jsx';
 import Forgotpassword from './forgotpassword.jsx';
 import EditProfile from './paramsApps/profile/EditProfile.jsx';
 import Follow from './Follow.jsx';
+import ResetPassword from './resetPassword.jsx';
+import NotFound from '../components/utilities/Notfound.jsx';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +42,10 @@ const router = createBrowserRouter([
     element: <Forgotpassword/>
   },
   {
+    path: "/forgotpassword/:email",
+    element: <ResetPassword/>
+  },
+  {
     path: "/account/setting",
     element: <SettingProfile/>
   },
@@ -53,13 +59,17 @@ const router = createBrowserRouter([
       <Navbar/>,
       <Dashboard/>
     ]
+  },
+  {
+    path: "*",
+    element: <NotFound/>
   }
 ]);
 
 export const App = () => {
   return(
-    <main>
+    <>
       <RouterProvider router={router}/>
-    </main>
+    </>
   )
 }

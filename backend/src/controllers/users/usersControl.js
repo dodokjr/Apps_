@@ -1,6 +1,6 @@
 import Users from "../../models/usersModel.js";
 import dbApps from "../../config/db.js";
-import { sendLoginMail, sendMail, sendPassword } from "../../utilities/sendMails.js";
+import { sendforgot, sendMail, sendPassword, sendSucces } from "../../utilities/sendMails.js";
 import { Op } from "sequelize";
 import { compare } from "../../utilities/brcryp.js";
 import
@@ -24,6 +24,7 @@ export const getUser = async (req, res) =>
     res.json(users);
 };
 
+// getUsers Profile
 export const getUserProfile = async (req, res) =>
 {
     const name = req.params.name
@@ -35,6 +36,40 @@ export const getUserProfile = async (req, res) =>
                 isActive: true,
             }
         })
+        res.status(200).send({
+            succes: true,
+            msg: "Users add",
+            data: users
+        })
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+}
+
+// getUsers By Email
+export const getUserVeryfy = async (req, res) =>
+{
+    const email = req.params.email
+    try
+    {
+        const users = await Users.findOne({
+            attributes: ["userId", "email", "name", "image_profile"], where: {
+                email: email,
+                isActive: true,
+            }
+        })
+        if (!users)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "No data"
+            })
+        }
         res.status(200).send({
             succes: true,
             msg: "Users add",
@@ -263,7 +298,7 @@ export const setLogin = async (req, res, next) =>
             {
                 return res.status(400).json({
                     errors: ["Wrong password"],
-                    message: "Login field",
+                    msg: "Wrong password",
                     data: data,
                 });
             }
@@ -278,7 +313,216 @@ export const setLogin = async (req, res, next) =>
     }
 };
 
+export const setForgotpassword = async (req, res) =>
+{
+    try
+    {
+        const valid = {
+            name: "requered"
+        }
+        const usersData = await dataValid(valid, req.body);
+        if (usersData.message.length > 0)
+        {
+            return res.status(400).json({
+                errors: usersData.message,
+                message: "Forgot password field",
+                data: usersData.data,
+            });
+        }
+        const users = await Users.findOne({
+            where: {
+                name: usersData.data.name
+            }
+        });
+        if (!users)
+        {
+            return res.status(404).json({
+                errors: ["User not found"],
+                message: "Forgot password field",
+                data: null,
+            });
+        };
+        // create Token 
+        const random = new Entropy({ bits: 160, charset: charset32 });
+        const stringPwd = random.string();
+        // send Mails
+        const sendMails = await sendforgot(users.email, users.email)
+        if (!sendMails)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "gagal Terkirim",
+                err: error.message
+            })
+        } else
+        {
+            return res.status(200).send({
+                succes: true,
+                msg: "Terkirim",
+                token: stringPwd
+            })
+        }
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+}
 
+// reset Password 
+export const setResetPassword = async (req, res) =>
+{
+    const t = await dbApps.transaction();
+    try
+    {
+        const useremail = req.params.email;
+        const valide = {
+            password: "requered,isStrongPassword",
+            conformPassword: "requered"
+        }
+        const validp = await dataValid(valide, req.body);
+        if (validp.data.password !== validp.data.conformPassword)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "Password Tidak Sama"
+            })
+        }
+        const user = await Users.findOne({
+            where: {
+                email: useremail,
+            }
+        })
+        if (!user)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "errro"
+            })
+        }
+        if (compare(validp.data.password, user.password))
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "Password Sama Dengan Yang lama"
+            })
+        }
+
+        await Users.update({
+            password: validp.data.password,
+        },
+            {
+                where: {
+                    user_id: user.userId,
+                    isActive: true,
+                },
+                transaction: t,
+            }
+        );
+        const result = await sendSucces(useremail, user.userId);
+        if (!result)
+        {
+            await t.rollback();
+            return res.status(400).json({
+                errors: ["Email not found"],
+                message: "Forgot password field",
+                data: null,
+            });
+        }
+        await t.commit();
+        return res.status(200).json({
+            errors: [],
+            message: "Forgot password success, please check your email",
+            data: null,
+        });
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+}
+
+// forgotPassword
+export const forgotPassword = async (req, res, next) =>
+{
+    const t = await dbApps.transaction();
+    try
+    {
+        const valid = {
+            name: "requered,isEmail",
+        };
+        const userData = await dataValid(valid, req.body);
+        if (userData.message.length > 0)
+        {
+            return res.status(400).json({
+                errors: userData.message,
+                msg: "Forgot password field",
+                data: userData.data,
+            });
+        }
+        const user = await Users.findOne({
+            where: {
+                name: userData.data.name,
+            },
+        });
+        if (!user)
+        {
+            await t.rollback();
+            return res.status(404).json({
+                errors: ["User not found"],
+                msg: "Forgot password field",
+                data: null,
+            });
+        }
+        // dapatkan random password
+        const random = new Entropy({ bits: 60, charset: charset32 });
+        const stringPwd = random.string();
+        // update password
+        await Users.update(
+            {
+                password: stringPwd,
+            },
+            {
+                where: {
+                    user_id: user.userId,
+                },
+                transaction: t,
+            }
+        );
+        const result = await sendPassword(user.email, stringPwd);
+        if (!result)
+        {
+            await t.rollback();
+            return res.status(400).json({
+                errors: ["Email not found"],
+                msg: "Forgot password field",
+                data: null,
+            });
+        }
+        await t.commit();
+        return res.status(200).json({
+            errors: [],
+            msg: "Forgot password success, please check your email",
+            data: null,
+        });
+    } catch (error)
+    {
+        await t.rollback();
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+};
+
+// save image
 export const setImage = async (req, res) =>
 {
     const userId = req.params.id;

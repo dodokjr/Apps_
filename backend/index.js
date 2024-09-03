@@ -27,7 +27,7 @@ try
 {
     await dbApps.authenticate();
     console.log("database Koneksi");
-    await usersPost.sync()
+    await dbApps.sync()
 } catch (error)
 {
     console.error(error)

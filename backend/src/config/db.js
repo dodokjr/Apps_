@@ -19,7 +19,6 @@ const dbApps = new Sequelize("losroot", "root", "", {
             return next();
         },
     },
-    insecureAuth: true,
 })
 
 export default dbApps;

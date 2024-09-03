@@ -1,6 +1,6 @@
 Search Box 
 Emty data
-Get Post 
+Get Post (True)
 
 
 
@@ -56,65 +56,3 @@ CREATE TABLE Follows (
     FOREIGN KEY (FolloweeID) REFERENCES Users(UserID)
 );
 
-
-
-
-
-
-import expres from "express";
-import Users from "../../models/usersModel.js";
-import usersPost from "../../models/usersPostModels.js";
-import dbApps from "../../config/db.js";
-import path from "path"
-
-// Post
-export const setUserPost = async (req, res) =>
-{
-    const t = await dbApps.transaction();
-    const name = req.body.name;
-    const caption = req.body.caption;
-    if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
-    const file = req.files.file;
-    if (!name || !caption) return res.sendStatus(400);
-    // Validasi Users
-    const users = await Users.findOne({
-        where: {
-            name: name,
-            isActive: true,
-        }
-    })
-    if (!users)
-    {
-        return res.status(400).send({
-            succes: false,
-            msg: "name No Wacth"
-        })
-    }
-    // file Validasi
-    const fileSize = file.data.length;
-    const ext = path.extname(file.name);
-    const fileName = Date.now() + file.md5 + ext;
-    const url = `${req.protocol}://${req.get("host")}/wdPost/${fileName}`;
-    const allowedType = ['.png', '.jpg', '.jpeg', '.jfif', '.gif'];
-
-    if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
-    if (fileSize > 5000000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
-
-    file.mv(`./uploads/wdPost/${fileName}`, async (err) =>
-    {
-        if (err) return res.status(500).json({ msg: err.message });
-        try
-        {
-            // post And Maping Data
-            await usersPost.create({ user_Id: users.user_Id, content_url: url, caption: caption }, { transaction: t });
-            res.status(201).json({ succes: true, msg: "Successfuly" });
-        } catch (error)
-        {
-            res.status(500).send({
-                succes: false,
-                msg: "Internal Server Error",
-                err: error.message
-            });
-        }
-    })
-}

@@ -16,6 +16,7 @@ import { fileTypeFromFile } from "file-type"
 import { dataValid } from "../../validation/dataValidation.js";
 import { Entropy, charset32 } from "entropy-string";
 import { isExists } from "../../validation/sanitization.js";
+import usersPost from "../../models/usersPostModels.js";
 
 // getUsers
 export const getUser = async (req, res) =>
@@ -35,11 +36,15 @@ export const getUserProfile = async (req, res) =>
                 name: name,
                 isActive: true,
             }
-        })
+        });
+        const userpost = await usersPost.findAll({ where: { userId: users.userId } })
         res.status(200).send({
             succes: true,
             msg: "Users add",
-            data: users
+            data: {
+                users,
+                userpost
+            }
         })
     } catch (error)
     {

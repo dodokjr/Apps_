@@ -276,6 +276,13 @@ export const setLogin = async (req, res, next) =>
                     data: data,
                 });
             }
+            if (user.isLogin == true)
+            {
+                return res.status(422).send({
+                    succes: false,
+                    msg: "You are logged in"
+                })
+            }
             // check password
             if (compare(data.password, user.password))
             {
@@ -288,6 +295,7 @@ export const setLogin = async (req, res, next) =>
                 };
                 const token = generateAccessToken(usr);
                 const refresh = generateRefreshToken(usr);
+                await Users.update({ isLogin: true }, { where: { userId: user.userId } })
                 return res.status(200).json({
                     errors: [],
                     msg: "Login success",
@@ -318,6 +326,43 @@ export const setLogin = async (req, res, next) =>
     }
 };
 
+// Logout
+export const setLogut = async (req, res) =>
+{
+    const name = req.body.name;
+    try
+    {
+        const user = await Users.findOne({ where: { name: name } })
+        if (!user)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "User Not Found"
+            })
+        }
+        if (user.isLogin == false)
+        {
+            return res.status(422).send({
+                succes: false,
+                msg: "You must log in"
+            })
+        }
+        await Users.update({ isLogin: false }, { where: { userId: user.userId } })
+        res.status(200).send({
+            succes: true,
+            msg: "you have successfully Logout"
+        })
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+}
+
+// send ForgotPassword
 export const setForgotpassword = async (req, res) =>
 {
     try
@@ -452,80 +497,6 @@ export const setResetPassword = async (req, res) =>
         })
     }
 }
-
-// forgotPassword
-export const forgotPassword = async (req, res, next) =>
-{
-    const t = await dbApps.transaction();
-    try
-    {
-        const valid = {
-            name: "requered,isEmail",
-        };
-        const userData = await dataValid(valid, req.body);
-        if (userData.message.length > 0)
-        {
-            return res.status(400).json({
-                errors: userData.message,
-                msg: "Forgot password field",
-                data: userData.data,
-            });
-        }
-        const user = await Users.findOne({
-            where: {
-                name: userData.data.name,
-            },
-        });
-        if (!user)
-        {
-            await t.rollback();
-            return res.status(404).json({
-                errors: ["User not found"],
-                msg: "Forgot password field",
-                data: null,
-            });
-        }
-        // dapatkan random password
-        const random = new Entropy({ bits: 60, charset: charset32 });
-        const stringPwd = random.string();
-        // update password
-        await Users.update(
-            {
-                password: stringPwd,
-            },
-            {
-                where: {
-                    user_id: user.userId,
-                },
-                transaction: t,
-            }
-        );
-        const result = await sendPassword(user.email, stringPwd);
-        if (!result)
-        {
-            await t.rollback();
-            return res.status(400).json({
-                errors: ["Email not found"],
-                msg: "Forgot password field",
-                data: null,
-            });
-        }
-        await t.commit();
-        return res.status(200).json({
-            errors: [],
-            msg: "Forgot password success, please check your email",
-            data: null,
-        });
-    } catch (error)
-    {
-        await t.rollback();
-        res.status(500).send({
-            succes: false,
-            msg: "Internal Server Error",
-            err: error.message
-        })
-    }
-};
 
 // save image
 export const setImage = async (req, res) =>

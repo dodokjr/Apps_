@@ -46,7 +46,7 @@ export const setUserPost = async (req, res) =>
         try
         {
             // post And Maping Data
-            const r = await usersPost.create({ userId: users.userId, ContentUrl: url, caption: caption }, { transaction: t });
+            const r = await usersPost.create({ userId: users.userId, ContentUrl: url, Caption: caption }, { transaction: t });
             await t.commit();
             res.status(201).json({ succes: true, msg: "Successfuly", data: r });
         } catch (error)

@@ -1,5 +1,5 @@
 import express from "express";
-import { getUser, setUsers, setActivateUser, setLogin, setImage, getUserProfile, setForgotpassword, setResetPassword, getUserVeryfy, setLogut } from "../controllers/users/usersControl.js";
+import { getUser, setUsers, setActivateUser, setLogin, setImage, getUserProfile, setForgotpassword, setResetPassword, getUserVeryfy, setLogut, setRefreshToken } from "../controllers/users/usersControl.js";
 import { autenticate } from "../controllers/errorHandling.js";
 
 const usersRoute = express.Router()
@@ -17,6 +17,8 @@ usersRoute.get("/users", autenticate, getUser);
 usersRoute.get("/activate/:id", setActivateUser);
 usersRoute.get("/users/:name", autenticate, getUserProfile);
 usersRoute.get("/email/:email", getUserVeryfy);
+usersRoute.get("/token", setRefreshToken);
+usersRoute.get("/apps", autenticate, () => "Hello Apps")
 
 // put
 

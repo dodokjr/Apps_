@@ -29,16 +29,14 @@ export default function Follow() {
     try {
       const formData = new FormData();
       formData.append('file', postImage);
-      const r = await axios.post("http://localhost:3100/follow", {
-        name: name,
+      const r = await axios.post(`http://localhost:3100/v1/f/pp/${name}`, {
         file: postImage
       }, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-      localStorage.clear("goRegister")
-      navigate(`/${name}`)
+      navigate(`/login`)
     } catch (error) {
       console.log(error)
     }

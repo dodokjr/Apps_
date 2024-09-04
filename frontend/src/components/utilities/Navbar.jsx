@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useNavigate } from"react-router-dom"
 import { FaBars, FaSearch } from "react-icons/fa";
 import { ModalSearch } from './modal/modal';
+import { IoSettings } from "react-icons/io5";
 
 export default function Navbar({
   data
@@ -20,7 +21,7 @@ export default function Navbar({
       </button>
       {data ? <div className="dropdown dropdown-end">
         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-          <div>{data}</div>
+          <IoSettings/>
         </div>
         <ul
           tabIndex={0}

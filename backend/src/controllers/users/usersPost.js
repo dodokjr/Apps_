@@ -4,6 +4,7 @@ import Users from "../../models/usersModel.js";
 import usersPost from "../../models/usersPostModels.js";
 import dbApps from "../../config/db.js";
 import path from "path"
+import usersComment from "../../models/usersCommentModels.js";
 
 // Post
 
@@ -68,7 +69,7 @@ export const getUsersPost = async (req, res) =>
     const userId = await Users.findOne({
         where: { name: name }
     })
-    if (!userId.userId)
+    if (!userId)
     {
         return res.status(402).send({
             succes: false,

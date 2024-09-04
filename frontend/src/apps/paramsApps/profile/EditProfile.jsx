@@ -9,10 +9,10 @@ import axios from 'axios'
 
 export default function EditProfile() {
     const [res, setRes] = useState('')
-    // const [input, setInput] = useState(res.bio)
-    // const [name, setName] = useState(res.name)
-    const [file, setFile] = useState(null)
+    const [image, setImage] = useState(null);
+    const [postImage, setPostImage] = useState(null)
     const [updateImageMsg, setUpdateImageMsg] = useState('')
+    const [msgError, setMsgError] = useState('')
 
   const navigate = useNavigate()
   const comName = localStorage.getItem("UserName")
@@ -22,7 +22,7 @@ export default function EditProfile() {
   }, [])
 
   const getUsers = async () => {
-    const accessToken = localStorage.getItem("usersToken")
+    const accessToken = localStorage.getItem("ctx.UsersAcessToken.true")
 
     try {
       const res = await axios.get(`http://localhost:3100/v1/f/users/${comName}`, {
@@ -30,47 +30,44 @@ export default function EditProfile() {
           Authorization: `Barer ${accessToken}`
         }
       }, { withCredentials: true })
-      setRes(res.data.data)
+      setRes(res.data.data.users)
       console.log(res.data.data)
     } catch (error) {
       console.log(error)
     }
   }
 
-  // const heandelSubmit = async (e) => {
-  //   console.log(file ,name, input)
-  //   e.preventDefault();
-  //   try {
-  //       await axios.put("http://localhost:3100/users/update/edit", {
-  //           _id: res.id,
-  //           name: name,
-  //           bio: input
-  //       })
+  const onImageChange = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImage(e.target.result);
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    setPostImage(event.target.files[0])
+  };
 
-  //   } catch (error) {
-  //       console.log(error)
-  //   }
-  // }
-
-  const heandelSubmitUpdateImage = async (e) => {
+  const fetchData = async (e) => {
     e.preventDefault()
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    axios.post(`http://localhost:3100/v1/f/pp/${res.userId}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-      .then((response) => {
-        setUpdateImageMsg(response.data.msg);
+    console.log(postImage)
+    try {
+      const formData = new FormData();
+      formData.append('file', postImage);
+      const r = await axios.post(`http://localhost:3100/v1/f/pp/${comName}`, {
+        file: postImage
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       })
-      .catch((error) => {
-        console.log(error)
-      });
+      setUpdateImageMsg(r.data.msg)
+    } catch (error) {
+      setMsgError(error.response.data.msg)
+    }
   }
+
+  console.log(res)
     return (
     <Layout>
         <div className='p-3 flex justify-center'>
@@ -78,15 +75,15 @@ export default function EditProfile() {
              <MenuEdit/>
              <div>
 
-              <form onSubmit={heandelSubmitUpdateImage}>
-                <span className='text-red-500'>{updateImageMsg}</span>
+              <form onSubmit={fetchData}>
+                <span className='text-red-500'>{msgError ? msgError : updateImageMsg}</span>
             <div role="alert" className="alert shadow-lg">
-            <img src={res.image_profile} alt="img" className="rounded-full" width={70} height={70}/>
+            <img src={image ? image : res.image_profile} alt="img" className="rounded-full" width={70} height={70}/>
             <div>
             <h3 className="font-bold">{res.name}</h3>
             <div className="text-xs">You have 1 unread message</div>
             </div>
-            <input type="file" onChange={(e) => setFile(e.target.files[0])} className="btn"/>
+            <input type="file" onChange={onImageChange} className="btn"/>
                 <button className='btn'>Upload</button>
             </div>
                 </form>

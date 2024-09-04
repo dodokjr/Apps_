@@ -1,42 +1,38 @@
 import { useState } from "react";
+import { FaHome, FaCompass } from "react-icons/fa";
+import { IoIosNotifications, IoMdClose } from "react-icons/io";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true);
     const Menus = [
-      { title: "Overview", src: "Overview" },
-      { title: "Transactions", src: "Transactions" },
-      { title: "Loyalty Cards", src: "Card", gap: true },
-      { title: "Subscriptions ", src: "Calendar" },
-      { title: "Debts", src: "Debt" },
-      { title: "Legal information", src: "Legal" },
-      { title: "Notifications ", src: "Notifications", gap: true },
-      { title: "Setting", src: "Settings" },
+      { title: "home", Icons: <FaHome size={25}/> },
+      { title: "Explore", Icons: <FaCompass size={25}/> },
+      { title: "NotifiCations", Icons: <IoIosNotifications size={25}/> }
     ];
   return (
-        <div className="flex">
+        <div className="flex bottom-full h-full">
       <div
         className={` ${
           open ? "w-72" : "w-20 "
         } bg-black h-screen p-5  pt-8 relative duration-300`}
       >
         <a
-          className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple
-           border-2 rounded-full  ${!open && "rotate-180"}`}
+          className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple rounded-full  ${!open && "rotate-180"}`}
           onClick={() => setOpen(!open)}
-        />
+        >{!open ? <GiHamburgerMenu size={25}/> : <IoMdClose size={25}/>}</a>
         <div className="flex gap-x-4 items-center">
           <a
-
             className={`cursor-pointer duration-500 ${
               open && "rotate-[360deg]"
             }`}
-          />
+          >Close</a>
           <h1
             className={`text-white origin-left font-medium text-xl duration-200 ${
               !open && "scale-0"
             }`}
           >
-            AdeCodes
+            Los Root
           </h1>
         </div>
         <ul className="pt-6">
@@ -48,7 +44,7 @@ const Sidebar = () => {
                 index === 0 && "bg-light-white"
               } `}
             >
-              <img src={`/assets/${Menu.src}.svg`} />
+              {Menu.Icons}
               <span className={`${!open && "hidden"} origin-left duration-200`}>
                 {Menu.title}
               </span>

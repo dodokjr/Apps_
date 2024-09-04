@@ -17,6 +17,7 @@ import { dataValid } from "../../validation/dataValidation.js";
 import { Entropy, charset32 } from "entropy-string";
 import { isExists } from "../../validation/sanitization.js";
 import usersPost from "../../models/usersPostModels.js";
+import usersComment from "../../models/usersCommentModels.js";
 
 // getUsers
 export const getUser = async (req, res) =>
@@ -32,18 +33,19 @@ export const getUserProfile = async (req, res) =>
     try
     {
         const users = await Users.findOne({
-            attributes: ["userId", "email", "name", "image_profile"], where: {
+            attributes: ["userId", "email", "name", "image_profile", "isLogin"], where: {
                 name: name,
                 isActive: true,
             }
         });
-        const userpost = await usersPost.findAll({ where: { userId: users.userId } })
+        const post = await usersPost.findAndCountAll({ where: { userId: users.userId } })
+
         res.status(200).send({
             succes: true,
             msg: "Users add",
             data: {
                 users,
-                userpost
+                dataPost: post
             }
         })
     } catch (error)
@@ -110,6 +112,7 @@ export const setUsers = async (req, res, next) =>
             users.message.push("Password not match")
             return res.status(400).send({
                 succes: false,
+                msg: "Password not match"
             });
         }
         if (users.data.length > null)
@@ -501,8 +504,11 @@ export const setResetPassword = async (req, res) =>
 // save image
 export const setImage = async (req, res) =>
 {
-    const userId = req.params.id;
-    if (!userId) return res.sendStatus(400);
+    const name = req.params.id;
+    if (!name) return res.sendStatus(400);
+    const user = await Users.findOne({ where: { name: name } })
+    if (!user) return res.sendStatus(422);
+    // file
     if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
     const file = req.files.file;
     const fileSize = file.data.length;
@@ -520,7 +526,7 @@ export const setImage = async (req, res) =>
         try
         {
             // Update PRofile
-            await Users.update({ image_profile: url, image: fileName }, { where: { userId: userId } });
+            await Users.update({ image_profile: url, image: fileName }, { where: { userId: user.userId } });
             res.status(200).json({ succes: true, msg: "Successfuly" });
         } catch (error)
         {
@@ -532,3 +538,72 @@ export const setImage = async (req, res) =>
         }
     })
 }
+
+// Refresh Token 
+export const setRefreshToken = async (req, res, next) =>
+{
+    try
+    {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        if (!token)
+        {
+            return res.status(401).json({
+                errors: ["Invalid token"],
+                message: "No token provided",
+                data: null,
+            });
+        }
+        const verify = verifyRefreshToken(token);
+        if (!verify)
+        {
+            return res.status(401).json({
+                errors: ["Invalid token"],
+                message: "Provided token is not valid",
+                data: null,
+            });
+        }
+        let data = parseJwt(token);
+        const user = await Users.findOne({
+            where: {
+                email: data.email,
+                isActive: true,
+            },
+        });
+        if (!user)
+        {
+            return res.status(404).json({
+                errors: ["User not found"],
+                message: "Provided token is not valid",
+                data: null,
+            });
+        } else
+        {
+            const usr = {
+                userId: user.userId,
+                name: user.name,
+                email: user.email,
+            };
+            const token = generateAccessToken(usr);
+            const refresh = generateRefreshToken(usr);
+            return res.status(200).json({
+                errors: [],
+                message: "Refresh success",
+                data: {
+                    userId: user.userId,
+                    name: user.name,
+                    email: user.email,
+                },
+                acessToken: token,
+                refreshToken: refresh,
+            });
+        }
+    } catch (error)
+    {
+        next(
+            new Error(
+                "controllers/userController.js:setRefreshToken - " + error.message
+            )
+        );
+    }
+};

@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 
 const SettingProfile = () => {
     const navigate = useNavigate()
-    localStorage.getItem("users")
     if(!localStorage.getItem("usersToken")) return navigate("/login")
 
     const Logout = async() => {
         try {
+            await axios.post("http://localhost:3100/v1/f/logout" , {
+                name: localStorage.getItem("UserName")
+            })
             localStorage.clear("UserName")
             localStorage.clear("usersToken")
             navigate("/login")

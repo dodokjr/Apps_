@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import Cookies from"universal-cookie"
 import { Link, useNavigate } from"react-router-dom"
 
 export default function Login() {
@@ -7,6 +8,7 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [pin, setPin] = useState('');
     const [msg, setMsg] = useState('');
+    const cookies = new Cookies();
     const Navigate = useNavigate();
     
     const Login = async(e) => {
@@ -17,7 +19,8 @@ export default function Login() {
           password: password,
           pin: pin
         }, { withCredentials: true })
-        localStorage.setItem("usersToken", res.data.acessToken)
+        cookies.set("refreshToken", res.data.refreshToken)
+        localStorage.setItem("ctx.UsersAcessToken.true", res.data.acessToken)
         localStorage.setItem("UserName", name)
         console.log(res.data)
         return Navigate(`/${name}`)

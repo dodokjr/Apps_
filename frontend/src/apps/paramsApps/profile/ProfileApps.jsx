@@ -6,23 +6,26 @@ import { jwtDecode } from 'jwt-decode';
 import instance from '../../../libs/axios/instance';
 import { ModalFollowers, ModalFollowing } from '../../../components/profile/modal/modal';
 import { ButtonFollow } from '../../../components/profile/assets/ButtonAx';
+import {PostMap} from '../../../components/profile/post/post'
 import NotFound from '../../../components/utilities/Notfound';
 
 export default function ProfileApps() {
   const {name} = useParams()
   const [res, setRes] = useState('')
+  const [online, setOnline] = useState()
   const navigate = useNavigate()
   const comName = localStorage.getItem("UserName")
-  
+
   useEffect(() => {
     getUsers()
   }, [])
 
+
   const getUsers = async () => {
-    const accessToken = localStorage.getItem("usersToken")
+    const accessToken = localStorage.getItem("ctx.UsersAcessToken.true")
 
     try {
-      const res = await axios.get(`http://localhost:3100/v1/f/users/${name}`, {
+      const res = await instance.get(`http://localhost:3100/v1/f/users/${name}`, {
         headers: {
           Authorization: `Barer ${accessToken}`
         }
@@ -30,7 +33,7 @@ export default function ProfileApps() {
       setRes(res.data.data)
       console.log(res.data.data)
     } catch (error) {
-      navigate("/login")
+      console.log(error)
     }
   }
 
@@ -48,25 +51,27 @@ export default function ProfileApps() {
         <div className='flex flex-col p-5 gap-4'>
       <div className='grid grid-rows-3 grid-flow-col gap-4'>
       <div className=" row-span-3">
-          <div className="avatar ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
-        <img src={res.image_profile && res.image_profile} alt="" className='rounded-full'/>
-        </div>
+        {res.users.isLogin == 1 && <div className="avatar online ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
+        <img src={res.users.image_profile ? res.users.image_profile : 'http://localhost:3100/photoProfile/pp.jpg'} alt="" className='rounded-full'/>
+        </div>}
+        {res.users.isLogin == 0 && <div className="avatar offline ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
+        <img src={res.users.image_profile ? res.users.image_profile : 'http://localhost:3100/photoProfile/pp.jpg'} alt="" className='rounded-full'/>
+        </div> }
             <div className='text-2xl row-span-2 col-span-2 p-2'>
-              <div>@{res.name && res.name}</div>
+              <div>@{res.users.name} {res.users.isLogin}</div>
             </div>
         </div>
       </div>
 
             <ButtonFollow name={name} comName={comName}/>
-            <div className='grid-cols-4 gap-3'>
-            <span>Post 100 </span>
+            <div className='grid-cols-3 gap-3'>
+            <span>Post {res.dataPost.count}</span>
             <a href='#' onClick={() => document.getElementById("modalFollowers").showModal()}>Followers 100 </a>
             <a href='#' onClick={() => document.getElementById("modalFollowing").showModal()}>Followed 20 </a>
-            <span >Like 1k </span>
             </div>
-            <p>{res.bio && res.bio}</p>
+            <p>{res.users.bio}</p>
         </div>
-        <div className='flex'>
+        <div className='flex justify-center'>
         <ul className="menu bg-base-200 lg:menu-horizontal rounded-box">
   <li>
     <a>
@@ -111,6 +116,9 @@ export default function ProfileApps() {
     </a>
   </li>
 </ul>
+        </div>
+        <div className='flex flex-col p-5 gap-4'>
+          <PostMap api={res.dataPost}/>
         </div>
       </section>
       <ModalFollowers/>

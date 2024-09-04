@@ -15,11 +15,11 @@ export default function Register() {
     const Register = async(e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3100/users', {
+            await axios.post('http://localhost:3100/v1/f/users', {
                 name: name,
                 email: email,
                 password: password,
-                confPassword: comfPassword,
+                conformPassword: comfPassword,
                 pin: pin
             })
             localStorage.setItem("goRegister", true)
@@ -30,11 +30,7 @@ export default function Register() {
             }
         }
     }
-    useEffect(() => {
-      if(localStorage.getItem("usersToken")) {
-        return Navigate(`/${name}`)
-      }
-    },[])
+    
   return (
     <>
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

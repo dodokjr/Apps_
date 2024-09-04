@@ -15,6 +15,7 @@ import EditProfile from './paramsApps/profile/EditProfile.jsx';
 import Follow from './Follow.jsx';
 import ResetPassword from './resetPassword.jsx';
 import NotFound from '../components/utilities/Notfound.jsx';
+import Atifity from './Atifity.jsx';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register/>,
+  },
+  {
+    path: "/actifity/:id",
+    element: <Atifity/>,
   },
   {
     path: "/follow/:name",

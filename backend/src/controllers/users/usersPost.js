@@ -4,7 +4,6 @@ import Users from "../../models/usersModel.js";
 import usersPost from "../../models/usersPostModels.js";
 import dbApps from "../../config/db.js";
 import path from "path"
-import usersComment from "../../models/usersCommentModels.js";
 
 // Post
 
@@ -47,7 +46,7 @@ export const setUserPost = async (req, res) =>
         try
         {
             // post And Maping Data
-            const r = await usersPost.create({ userId: users.userId, ContentUrl: url, Caption: caption }, { transaction: t });
+            const r = await usersPost.create({ userId: users.userId, ContentUrl: url, caption: caption }, { transaction: t });
             await t.commit();
             res.status(201).json({ succes: true, msg: "Successfuly", data: r });
         } catch (error)
@@ -69,7 +68,7 @@ export const getUsersPost = async (req, res) =>
     const userId = await Users.findOne({
         where: { name: name }
     })
-    if (!userId)
+    if (!userId.userId)
     {
         return res.status(402).send({
             succes: false,

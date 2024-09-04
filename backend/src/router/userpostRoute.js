@@ -1,4 +1,5 @@
 import express from "express";
+import { getUser, setUsers, setActivateUser, setLogin, setImage, getUserProfile, setForgotpassword, setResetPassword, forgotPassword, getUserVeryfy } from "../controllers/users/usersControl.js";
 import { autenticate } from "../controllers/errorHandling.js";
 import usersPost from "../models/usersPostModels.js";
 import { getUsersPost, setUserPost } from "../controllers/users/usersPost.js";

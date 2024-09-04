@@ -53,10 +53,6 @@ const Users = dbApps.define('users', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    isLogin: {
-        type: DataTypes.TEXT,
-        defaultValue: false
-    },
     isActive: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,

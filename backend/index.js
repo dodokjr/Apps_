@@ -7,7 +7,6 @@ import dbApps from "./src/config/db.js"
 import Users from "./src/models/usersModel.js"
 import appMiddleware from "./src/middleware/index.js"
 import usersPost from "./src/models/usersPostModels.js"
-import usersComment from "./src/models/usersCommentModels.js"
 
 
 
@@ -28,6 +27,7 @@ try
 {
     await dbApps.authenticate();
     console.log("database Koneksi");
+    await dbApps.sync()
 } catch (error)
 {
     console.error(error)

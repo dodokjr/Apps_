@@ -4,6 +4,7 @@ import Users from "../../models/usersModel.js";
 import usersPost from "../../models/usersPostModels.js";
 import dbApps from "../../config/db.js";
 import path from "path"
+import usersComment from "../../models/usersCommentModels.js";
 
 // Post
 
@@ -46,7 +47,7 @@ export const setUserPost = async (req, res) =>
         try
         {
             // post And Maping Data
-            const r = await usersPost.create({ userId: users.userId, ContentUrl: url, caption: caption }, { transaction: t });
+            const r = await usersPost.create({ userId: users.userId, ContentUrl: url, Caption: caption }, { transaction: t });
             await t.commit();
             res.status(201).json({ succes: true, msg: "Successfuly", data: r });
         } catch (error)
@@ -68,7 +69,7 @@ export const getUsersPost = async (req, res) =>
     const userId = await Users.findOne({
         where: { name: name }
     })
-    if (!userId.userId)
+    if (!userId)
     {
         return res.status(402).send({
             succes: false,
@@ -97,6 +98,46 @@ export const getUsersPost = async (req, res) =>
         res.status(500).send({
             succes: false,
             msg: "Internal Server Errror",
+            err: error.message
+        })
+    }
+}
+
+export const getPostById = async (req, res) =>
+{
+    const postId = req.body.id;
+    try
+    {
+        const r = await usersPost.findOne({
+            where: { postId: postId }
+        })
+        const c = await usersComment.findAll({
+            where: { postId: postId },
+        })
+
+        const p = await Promise.all(c.map(async (r, index) =>
+        {
+            return await Users.findOne({ attributes: ["userId", "name", "image_profile"], where: { userId: r.userId } })
+        }))
+
+
+        if (!p || !c || !r)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "Error"
+            })
+        }
+        res.status(200).send({
+            succes: true,
+            msg: "Data Berhasil Di dapat",
+            data: { r, c, p }
+        })
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
             err: error.message
         })
     }

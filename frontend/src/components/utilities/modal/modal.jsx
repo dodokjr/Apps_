@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from"axios"
+import { useLocation } from "react-router-dom";
 
 export const ModalSearch = () => {
   const [input, setInput] = useState('')
@@ -41,3 +42,4 @@ export const ModalSearch = () => {
 </dialog>
     )
 }
+

@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import { Model, Sequelize } from "sequelize";
 import dbApps from "../config/db.js";
 import { encript } from "../utilities/brcryp.js";
 import moment from "moment";
@@ -53,6 +53,10 @@ const Users = dbApps.define('users', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    isLogin: {
+        type: DataTypes.TEXT,
+        defaultValue: false
+    },
     isActive: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
@@ -76,5 +80,4 @@ const Users = dbApps.define('users', {
         underscored: true,
         timestamps: true,
     });
-
 export default Users;

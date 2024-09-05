@@ -17,6 +17,7 @@ import { dataValid } from "../../validation/dataValidation.js";
 import { Entropy, charset32 } from "entropy-string";
 import { isExists } from "../../validation/sanitization.js";
 import usersPost from "../../models/usersPostModels.js";
+import usersComment from "../../models/usersCommentModels.js";
 
 // getUsers
 export const getUser = async (req, res) =>
@@ -37,13 +38,14 @@ export const getUserProfile = async (req, res) =>
                 isActive: true,
             }
         });
-        const userpost = await usersPost.findAll({ where: { userId: users.userId } })
+        const post = await usersPost.findAndCountAll({ where: { userId: users.userId } })
+
         res.status(200).send({
             succes: true,
             msg: "Users add",
             data: {
                 users,
-                userpost
+                dataPost: post
             }
         })
     } catch (error)
@@ -110,6 +112,7 @@ export const setUsers = async (req, res, next) =>
             users.message.push("Password not match")
             return res.status(400).send({
                 succes: false,
+                msg: "Password not match"
             });
         }
         if (users.data.length > null)
@@ -276,6 +279,13 @@ export const setLogin = async (req, res, next) =>
                     data: data,
                 });
             }
+            if (user.isLogin == true)
+            {
+                return res.status(422).send({
+                    succes: false,
+                    msg: "You are logged in"
+                })
+            }
             // check password
             if (compare(data.password, user.password))
             {
@@ -288,6 +298,7 @@ export const setLogin = async (req, res, next) =>
                 };
                 const token = generateAccessToken(usr);
                 const refresh = generateRefreshToken(usr);
+                await Users.update({ isLogin: true }, { where: { userId: user.userId } })
                 return res.status(200).json({
                     errors: [],
                     msg: "Login success",
@@ -318,6 +329,43 @@ export const setLogin = async (req, res, next) =>
     }
 };
 
+// Logout
+export const setLogut = async (req, res) =>
+{
+    const name = req.body.name;
+    try
+    {
+        const user = await Users.findOne({ where: { name: name } })
+        if (!user)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "User Not Found"
+            })
+        }
+        if (user.isLogin == false)
+        {
+            return res.status(422).send({
+                succes: false,
+                msg: "You must log in"
+            })
+        }
+        await Users.update({ isLogin: false }, { where: { userId: user.userId } })
+        res.status(200).send({
+            succes: true,
+            msg: "you have successfully Logout"
+        })
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+}
+
+// send ForgotPassword
 export const setForgotpassword = async (req, res) =>
 {
     try
@@ -453,85 +501,14 @@ export const setResetPassword = async (req, res) =>
     }
 }
 
-// forgotPassword
-export const forgotPassword = async (req, res, next) =>
-{
-    const t = await dbApps.transaction();
-    try
-    {
-        const valid = {
-            name: "requered,isEmail",
-        };
-        const userData = await dataValid(valid, req.body);
-        if (userData.message.length > 0)
-        {
-            return res.status(400).json({
-                errors: userData.message,
-                msg: "Forgot password field",
-                data: userData.data,
-            });
-        }
-        const user = await Users.findOne({
-            where: {
-                name: userData.data.name,
-            },
-        });
-        if (!user)
-        {
-            await t.rollback();
-            return res.status(404).json({
-                errors: ["User not found"],
-                msg: "Forgot password field",
-                data: null,
-            });
-        }
-        // dapatkan random password
-        const random = new Entropy({ bits: 60, charset: charset32 });
-        const stringPwd = random.string();
-        // update password
-        await Users.update(
-            {
-                password: stringPwd,
-            },
-            {
-                where: {
-                    user_id: user.userId,
-                },
-                transaction: t,
-            }
-        );
-        const result = await sendPassword(user.email, stringPwd);
-        if (!result)
-        {
-            await t.rollback();
-            return res.status(400).json({
-                errors: ["Email not found"],
-                msg: "Forgot password field",
-                data: null,
-            });
-        }
-        await t.commit();
-        return res.status(200).json({
-            errors: [],
-            msg: "Forgot password success, please check your email",
-            data: null,
-        });
-    } catch (error)
-    {
-        await t.rollback();
-        res.status(500).send({
-            succes: false,
-            msg: "Internal Server Error",
-            err: error.message
-        })
-    }
-};
-
 // save image
 export const setImage = async (req, res) =>
 {
-    const userId = req.params.id;
-    if (!userId) return res.sendStatus(400);
+    const name = req.params.id;
+    if (!name) return res.sendStatus(400);
+    const user = await Users.findOne({ where: { name: name } })
+    if (!user) return res.sendStatus(422);
+    // file
     if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
     const file = req.files.file;
     const fileSize = file.data.length;
@@ -549,7 +526,7 @@ export const setImage = async (req, res) =>
         try
         {
             // Update PRofile
-            await Users.update({ image_profile: url, image: fileName }, { where: { userId: userId } });
+            await Users.update({ image_profile: url, image: fileName }, { where: { userId: user.userId } });
             res.status(200).json({ succes: true, msg: "Successfuly" });
         } catch (error)
         {
@@ -561,3 +538,72 @@ export const setImage = async (req, res) =>
         }
     })
 }
+
+// Refresh Token 
+export const setRefreshToken = async (req, res, next) =>
+{
+    try
+    {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        if (!token)
+        {
+            return res.status(401).json({
+                errors: ["Invalid token"],
+                message: "No token provided",
+                data: null,
+            });
+        }
+        const verify = verifyRefreshToken(token);
+        if (!verify)
+        {
+            return res.status(401).json({
+                errors: ["Invalid token"],
+                message: "Provided token is not valid",
+                data: null,
+            });
+        }
+        let data = parseJwt(token);
+        const user = await Users.findOne({
+            where: {
+                email: data.email,
+                isActive: true,
+            },
+        });
+        if (!user)
+        {
+            return res.status(404).json({
+                errors: ["User not found"],
+                message: "Provided token is not valid",
+                data: null,
+            });
+        } else
+        {
+            const usr = {
+                userId: user.userId,
+                name: user.name,
+                email: user.email,
+            };
+            const token = generateAccessToken(usr);
+            const refresh = generateRefreshToken(usr);
+            return res.status(200).json({
+                errors: [],
+                message: "Refresh success",
+                data: {
+                    userId: user.userId,
+                    name: user.name,
+                    email: user.email,
+                },
+                acessToken: token,
+                refreshToken: refresh,
+            });
+        }
+    } catch (error)
+    {
+        next(
+            new Error(
+                "controllers/userController.js:setRefreshToken - " + error.message
+            )
+        );
+    }
+};

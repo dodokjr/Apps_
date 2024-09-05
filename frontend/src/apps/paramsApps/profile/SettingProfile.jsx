@@ -16,7 +16,7 @@ const SettingProfile = () => {
                 name: localStorage.getItem("UserName")
             })
             localStorage.clear("UserName")
-            localStorage.clear("usersToken")
+            localStorage.clear("ctx.UsersAcessToken.true")
             navigate("/login")
         } catch (error) {
             console.log(error)

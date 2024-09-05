@@ -8,6 +8,7 @@ import { ModalFollowers, ModalFollowing } from '../../../components/profile/moda
 import { ButtonFollow } from '../../../components/profile/assets/ButtonAx';
 import {PostMap} from '../../../components/profile/post/post'
 import NotFound from '../../../components/utilities/Notfound';
+import Loding from '../../../components/utilities/loding';
 
 export default function ProfileApps() {
   const {name} = useParams()
@@ -40,7 +41,7 @@ export default function ProfileApps() {
   if(!res) {
     return (
       <Layout>
-        <NotFound/>
+        <Loding/>
       </Layout>
     )
   }

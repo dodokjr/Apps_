@@ -16,6 +16,7 @@ const usersPost = dbApps.define("usersPost", {
   userId: {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
+    unique: true,
     allowNull: false,
   },
 
@@ -33,6 +34,7 @@ const usersPost = dbApps.define("usersPost", {
     underscored: true,
   }
 );
+
 
 Users.hasMany(usersPost, {
   foreignKey: "userId",

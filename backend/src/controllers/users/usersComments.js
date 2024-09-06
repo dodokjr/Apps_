@@ -7,16 +7,25 @@ import usersComment from "../../models/usersCommentModels.js";
 
 export const setComment = async (req, res) =>
 {
-    const postId = req.body.postId;
-    const userId = req.body.userId;
-    const content = req.body.c;
-    if (!postId || !content) return res.sendStatus(400)
+    const postId = req.params.postId;
+    const userId = req.query.userId;
+    const content = req.query.c;
+    if (!postId || !userId || !content)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Tidak ADa UserId , PostId, Content",
+            err: [err]
+        })
+    }
     try
     {
         const user = await usersPost.findOne({ where: { postId: postId } })
-        const profile = await Users.findOne({ where: { userId: userId } })
+        console.log(user)
         if (!user) return res.sendStatus(422)
-        const comment = await usersComment.create({ postId: user.postId, userId: userId, Content: content, name: profile.name })
+        const users = await usersPost.findByPk(postId, { include: [{ model: Users, foreignKey: "userId" }] })
+        console.log(users.dataValues)
+        const comment = await usersComment.create({ postId: postId, userId: userId, Content: content })
         res.status(200).send({
             succes: true,
             msg: comment
@@ -38,7 +47,9 @@ export const setGetComment = async (req, res) =>
     if (!postId) return res.sendStatus(400);
     try
     {
-        const comment = await usersComment.findAndCountAll({ attributes: ["commentId", "userId", "postId", "Content"], where: { postId: postId }, include: [{ model: Users, as: "name" }] })
+        const post = await usersPost.findOne({ where: { postId: postId } })
+        const comment = await usersComment.findAndCountAll({ attributes: ["userId", "postId", "Content", "commentId"], where: { postId: postId }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile"] }] })
+        console.log(comment)
         res.status(200).send({
             succes: true,
             msg: comment

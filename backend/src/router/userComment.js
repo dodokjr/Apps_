@@ -5,7 +5,7 @@ import { setComment, setGetComment } from "../controllers/users/usersComments.js
 
 const usersCommentRoute = express.Router();
 // Post
-usersCommentRoute.post("/comment", setComment);
+usersCommentRoute.post("/comment/:postId", setComment);
 
 // get
 usersCommentRoute.get("/comment/:id", setGetComment);

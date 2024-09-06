@@ -19,7 +19,6 @@ const usersComment = dbApps.define("usersComment", {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
     },
-
     userId: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -41,12 +40,22 @@ const usersComment = dbApps.define("usersComment", {
     }
 );
 
-usersPost.belongsToMany(Users, {
-    through: "usersComment",
-    foreignKey: 'postId',
-    otherKey: 'userId',
+
+usersPost.hasMany(usersComment, {
+    foreignKey: "postId",
 })
 
+usersComment.belongsTo(usersPost, {
+    foreignKey: "postId"
+})
+
+Users.hasMany(usersComment, {
+    foreignKey: "userId",
+})
+
+usersComment.belongsTo(Users, {
+    foreignKey: "userId"
+})
 
 
 

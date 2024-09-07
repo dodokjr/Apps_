@@ -16,10 +16,12 @@ import Follow from './Follow.jsx';
 import ResetPassword from './resetPassword.jsx';
 import NotFound from '../components/utilities/Notfound.jsx';
 import Atifity from './Atifity.jsx';
+import PostUrl from './paramsApps/profile/postUrl/PostUrl.jsx';
+import ViewPost from './paramsApps/profile/postUrl/ViewPost.jsx';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/home",
     element: "Hello world",
   },
   {
@@ -58,13 +60,14 @@ const router = createBrowserRouter([
     path: "/account/edit",
     element: <EditProfile/>
   },
-  {
-    path: "/dashboard",
-    element: [
-      <Navbar/>,
-      <Dashboard/>
-    ]
-  },
+ {
+  path: "/upload",
+  element: <PostUrl/>
+ },
+ {
+  path: "/post/:id",
+  element: <ViewPost/>
+ },
   {
     path: "*",
     element: <NotFound/>

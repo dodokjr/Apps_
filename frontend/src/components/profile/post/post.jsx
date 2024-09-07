@@ -9,7 +9,7 @@ export const PostMap = ({api, apiTwo}) => {
             {
                 return (
                   <Suspense fallback={<p>Loading</p>} key={index}>
-                    <Link to={`#/?key=${r.postId}`} onClick={() => document.getElementById("PostModal").showModal()} className="cursor-pointer text-color-dark dark:text-color-primary hover:text-color-accent transition-all">
+                    <Link to={`/post/${r.postId}`} onClick={() => document.getElementById("PostModal").showModal()} className="cursor-pointer text-color-dark dark:text-color-primary hover:text-color-accent transition-all">
                         <img src={r.ContentUrl} alt="..." width={350} height={350} className="w-full max-h-64 object-cover" />
                     </Link>
                   </Suspense>

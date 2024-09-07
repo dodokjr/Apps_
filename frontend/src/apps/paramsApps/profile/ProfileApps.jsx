@@ -52,6 +52,7 @@ export default function ProfileApps() {
         <div className='flex flex-col p-5 gap-4'>
       <div className='grid grid-rows-3 grid-flow-col gap-4'>
       <div className=" row-span-3">
+        {/* image */}
         {res.users.isLogin == 1 && <div className="avatar online ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
         <img src={res.users.image_profile ? res.users.image_profile : 'http://localhost:3100/photoProfile/pp.jpg'} alt="" className='rounded-full'/>
         </div>}

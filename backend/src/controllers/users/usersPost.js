@@ -7,8 +7,6 @@ import path from "path"
 import usersComment from "../../models/usersCommentModels.js";
 
 // Post
-
-
 export const setUserPost = async (req, res) =>
 {
     const t = await dbApps.transaction();
@@ -105,23 +103,17 @@ export const getUsersPost = async (req, res) =>
 
 export const getPostById = async (req, res) =>
 {
-    const postId = req.body.id;
+    const postId = req.params.id;
     try
     {
         const r = await usersPost.findOne({
-            where: { postId: postId }
-        })
-        const c = await usersComment.findAll({
             where: { postId: postId },
+            include: [{ model: Users }]
         })
-
-        const p = await Promise.all(c.map(async (r, index) =>
-        {
-            return await Users.findOne({ attributes: ["userId", "name", "image_profile"], where: { userId: r.userId } })
-        }))
+        const c = await usersComment.findAndCountAll({ where: { postId: postId }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile", "bio", "email"] }] })
 
 
-        if (!p || !c || !r)
+        if (!c || !r)
         {
             return res.status(400).send({
                 succes: false,
@@ -131,7 +123,7 @@ export const getPostById = async (req, res) =>
         res.status(200).send({
             succes: true,
             msg: "Data Berhasil Di dapat",
-            data: { r, c, p }
+            data: { r, c }
         })
     } catch (error)
     {

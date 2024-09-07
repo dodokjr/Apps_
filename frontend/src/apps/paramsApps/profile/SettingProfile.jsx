@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const SettingProfile = () => {
     const navigate = useNavigate()
-    if(!localStorage.getItem("usersToken")) return navigate("/login")
+    if(!localStorage.getItem("ctx.UsersAcessToken.true")) return navigate("/login")
 
     const Logout = async() => {
         try {

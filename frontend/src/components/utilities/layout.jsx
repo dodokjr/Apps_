@@ -11,7 +11,7 @@ export default function Layout({children}) {
                 <Sidebar />
                 <div className="flex flex-col flex-1">
                   <Navbar data={userAccounts} />
-                    <div>
+                    <div className={`${userAccounts}`}>
                       {children}
                     </div>
                 </div>

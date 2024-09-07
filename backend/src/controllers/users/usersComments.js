@@ -8,24 +8,23 @@ import usersComment from "../../models/usersCommentModels.js";
 export const setComment = async (req, res) =>
 {
     const postId = req.params.postId;
-    const userId = req.query.userId;
+    const name = req.query.name;
     const content = req.query.c;
-    if (!postId || !userId || !content)
+    if (!postId || !name || !content)
     {
         return res.status(400).send({
             succes: false,
-            msg: "Tidak ADa UserId , PostId, Content",
+            msg: "Tidak Ada name , PostId, Content",
             err: [err]
         })
     }
     try
     {
+        const userId = await Users.findOne({ where: { name: name } })
         const user = await usersPost.findOne({ where: { postId: postId } })
         console.log(user)
         if (!user) return res.sendStatus(422)
-        const users = await usersPost.findByPk(postId, { include: [{ model: Users, foreignKey: "userId" }] })
-        console.log(users.dataValues)
-        const comment = await usersComment.create({ postId: postId, userId: userId, Content: content })
+        const comment = await usersComment.create({ postId: postId, userId: userId.userId, Content: content })
         res.status(200).send({
             succes: true,
             msg: comment
@@ -40,6 +39,7 @@ export const setComment = async (req, res) =>
     }
 }
 
+// get Comment
 export const setGetComment = async (req, res) =>
 {
     const postId = req.params.id;
@@ -48,7 +48,7 @@ export const setGetComment = async (req, res) =>
     try
     {
         const post = await usersPost.findOne({ where: { postId: postId } })
-        const comment = await usersComment.findAndCountAll({ attributes: ["userId", "postId", "Content", "commentId"], where: { postId: postId }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile"] }] })
+        const comment = await usersComment.findAndCountAll({ where: { postId: postId }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile", "bio", "email"] }] })
         console.log(comment)
         res.status(200).send({
             succes: true,

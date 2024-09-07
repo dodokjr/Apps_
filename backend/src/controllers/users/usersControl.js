@@ -33,7 +33,7 @@ export const getUserProfile = async (req, res) =>
     try
     {
         const users = await Users.findOne({
-            attributes: ["userId", "email", "name", "image_profile"], where: {
+            attributes: ["userId", "email", "name", "image_profile", "bio", "isLogin"], where: {
                 name: name,
                 isActive: true,
             }
@@ -44,7 +44,7 @@ export const getUserProfile = async (req, res) =>
             succes: true,
             msg: "Users add",
             data: {
-                users,
+                users: users,
                 dataPost: post
             }
         })

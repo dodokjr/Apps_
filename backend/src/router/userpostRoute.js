@@ -5,10 +5,10 @@ import { getPostById, getUsersPost, setUserPost } from "../controllers/users/use
 
 const usersPostRoute = express.Router();
 // Post
-usersPostRoute.post("/post", setUserPost);
-usersPostRoute.post("/post/p/", getPostById);
+usersPostRoute.post("/post/u", setUserPost);
 
 // get
+usersPostRoute.get("/post/p/:id", getPostById);
 usersPostRoute.get("/post/:name", getUsersPost);
 
 // put

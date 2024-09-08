@@ -22,6 +22,7 @@ export default function Login() {
         cookies.set("refreshToken", res.data.refreshToken)
         localStorage.setItem("ctx.UsersAcessToken.true", res.data.acessToken)
         localStorage.setItem("UserName", name)
+        localStorage.setItem("refreshToken", res.data.refreshToken)
         console.log(res.data)
         return Navigate(`/${name}`)
       } catch (error) {

@@ -38,14 +38,14 @@ const usersPost = dbApps.define("usersPost", {
 
 Users.hasMany(usersPost, {
   foreignKey: "userId",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 usersPost.belongsTo(Users, {
   foreignKey: "userId",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 export default usersPost;

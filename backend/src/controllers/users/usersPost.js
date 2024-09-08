@@ -11,30 +11,19 @@ export const setUserPost = async (req, res) =>
 {
     const t = await dbApps.transaction();
     const name = req.body.name;
-    const caption = req.body.caption;
+    const caption = req.body.c;
+    const userId = req.body.u;
+    if (!name) return res.sendStatus(400);
+    const user = await Users.findOne({ where: { name: name } })
+    if (!user) return res.sendStatus(422);
+    // file
     if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
     const file = req.files.file;
-    if (!name || !caption) return res.sendStatus(400);
-    // Validasi Users
-    const users = await Users.findOne({
-        where: {
-            name: name,
-            isActive: true,
-        }
-    })
-    if (!users)
-    {
-        return res.status(400).send({
-            succes: false,
-            msg: "name No Wacth"
-        })
-    }
-    // file Validasi
     const fileSize = file.data.length;
     const ext = path.extname(file.name);
     const fileName = Date.now() + file.md5 + ext;
-    const url = `${req.protocol}://${req.get("host")}/wdPost/${fileName}`;
-    const allowedType = ['.png', '.jpg', '.jpeg', '.jfif', '.gif'];
+    const url = `${req.protocol}://${req.get("host")}/wdpost/${fileName}`;
+    const allowedType = ['.png', '.jpg', '.jpeg', '.jfif', '.gif', '.mp4'];
 
     if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
     if (fileSize > 5000000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
@@ -44,10 +33,15 @@ export const setUserPost = async (req, res) =>
         if (err) return res.status(500).json({ msg: err.message });
         try
         {
-            // post And Maping Data
-            const r = await usersPost.create({ userId: users.userId, ContentUrl: url, Caption: caption }, { transaction: t });
-            await t.commit();
-            res.status(201).json({ succes: true, msg: "Successfuly", data: r });
+            // create Post
+            const r = await usersPost.create({ userId: userId, ContentUrl: url, Caption: caption });
+            if (r)
+            {
+                return res.status(200).json({ succes: true, msg: "Successfuly" });
+            } else
+            {
+                return res.status(400).json({ succes: false, msg: "error create" })
+            }
         } catch (error)
         {
             res.status(500).send({
@@ -58,6 +52,7 @@ export const setUserPost = async (req, res) =>
         }
     })
 }
+
 
 
 export const getUsersPost = async (req, res) =>

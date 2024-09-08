@@ -31,7 +31,7 @@ const PostUrl = () => {
     try {
       const formData = new FormData();
       formData.append('file', postImage);
-      const r = await axios.post(`http://localhost:3100/v1/p/post`, {
+      const r = await axios.post(`http://localhost:3100/v1/p/post/u/`, {
         file: postImage,
         name: name,
         caption: capsion

@@ -5,6 +5,7 @@ import usersPost from "../../models/usersPostModels.js";
 import dbApps from "../../config/db.js";
 import path from "path"
 import usersComment from "../../models/usersCommentModels.js";
+import LikePost from "../../models/usersLikePost.js";
 
 // Post
 export const setUserPost = async (req, res) =>
@@ -103,7 +104,7 @@ export const getPostById = async (req, res) =>
     {
         const r = await usersPost.findOne({
             where: { postId: postId },
-            include: [{ model: Users }]
+            include: [{ model: Users }, { model: LikePost }]
         })
         const c = await usersComment.findAndCountAll({ where: { postId: postId }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile", "bio", "email"] }] })
 

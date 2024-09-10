@@ -31,10 +31,11 @@ const PostUrl = () => {
     try {
       const formData = new FormData();
       formData.append('file', postImage);
-      const r = await axios.post(`http://localhost:3100/v1/p/post/u/`, {
+      const r = await axios.post(`http://localhost:3100/v1/p/post/u`, {
         file: postImage,
         name: name,
-        caption: capsion
+        caption: capsion,
+        u: "dae42b1f-0301-4405-8945-c5adf1398fc0"
       }, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -57,7 +58,7 @@ const PostUrl = () => {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                {image && <img className='w-full' src={image} alt="Previewed image" />}
+                {image && <img className={msg.ssucces == true ? `hidden` :`w-full`} src={image} alt="Previewed image" />}
                 <form className="space-y-6" onSubmit={post}>
                     <label className="block text-sm font-medium leading-6 text-white">Select Your Post</label>
                     <input type="file" onChange={onImageChange} className="file-input w-full max-w-xs" />

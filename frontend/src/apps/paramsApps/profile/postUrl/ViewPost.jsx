@@ -67,7 +67,7 @@ export default function ViewPost() {
                 {res.c?.rows.map((r, i) => {
                     return(
                         <div className='p-2 grid grid-cols-1'>
-                            <div className='row-span-2' key={i+1}>
+                            <div className='row-span-2' key={i}>
                             {r.user.image_profile ? <div className="avatar ring-primary ring-offset-base-100 w-9 rounded-full ring ring-offset-2">
                 <img src={r?.user.image_profile ? r?.user.image_profile : 'http://localhost:3100/photoProfile/pp.jpg'} alt="" className='rounded-full' width={130} height={90}/>
                 </div> : <div className="skeleton rounded-full"></div>}

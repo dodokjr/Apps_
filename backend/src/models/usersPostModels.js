@@ -16,7 +16,6 @@ const usersPost = dbApps.define("usersPost", {
   userId: {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
-    unique: true,
     allowNull: false,
   },
 
@@ -35,17 +34,16 @@ const usersPost = dbApps.define("usersPost", {
   }
 );
 
-
 Users.hasMany(usersPost, {
   foreignKey: "userId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
 });
 
 usersPost.belongsTo(Users, {
   foreignKey: "userId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
 });
 
 export default usersPost;

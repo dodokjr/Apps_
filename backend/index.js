@@ -7,6 +7,9 @@ import dbApps from "./src/config/db.js"
 import Users from "./src/models/usersModel.js"
 import appMiddleware from "./src/middleware/index.js"
 import usersPost from "./src/models/usersPostModels.js"
+import Followed from "./src/models/usersFollowed.js"
+import Follower from "./src/models/usersFollowers.js"
+import LikePost from "./src/models/usersLikePost.js"
 
 
 

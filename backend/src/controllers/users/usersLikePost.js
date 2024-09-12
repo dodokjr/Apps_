@@ -24,26 +24,19 @@ export const setLike = async (req, res) =>
         const user = await usersPost.findOne({ where: { postId: postId } })
         if (!user) return res.sendStatus(422)
         if (!userId) return res.sendStatus(422)
-        console.log(userId.userId)
-        const like = await LikePost.findOne({ where: { postId: postId } })
-        if (!like !== userId) 
+        // Create like
+        const comment = await LikePost.create({ postId: postId, userId: userId.userId, isLike: true })
+        if (!comment)
         {
-            const comment = await LikePost.create({ postId: postId, userId: userId.userId, isLike: true })
-            return res.status(200).send({
-                succes: true,
-                msg: comment
+            return res.status(400).send({
+                succes: false,
+                msg: "error"
             })
         }
-
-        if (like.isLike == true)
-        {
-            const like = await LikePost.destroy({ where: { postId: postId, userId: userId.userId } })
-            if (!like) return res.status(400), send({ succes: false, msg: "error" })
-            res.status(200).send({
-                succes: true,
-                msg: like
-            })
-        }
+        res.status(200).send({
+            succes: true,
+            msg: comment
+        })
     } catch (error)
     {
         res.status(500).send({
@@ -71,7 +64,12 @@ export const setLikeUpdate = async (req, res) =>
     {
         const userId = await Users.findOne({ where: { name: name } })
         const user = await usersPost.findOne({ where: { postId: postId } })
-        if (!user) return res.sendStatus(422)
+        const like = await LikePost.findOne({ where: { postId: postId } })
+        if (!user || !userId || like) return res.sendStatus(422)
+        if (like.isLike == true)
+        {
+
+        }
 
     } catch (error)
     {

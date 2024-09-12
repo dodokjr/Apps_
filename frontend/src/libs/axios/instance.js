@@ -15,7 +15,7 @@ instance.interceptors.request.use(async (config) =>
     {
         const response = await axios.get('http://localhost:3100/v1/f/token', { headers: { "Authorization": `Barer ${rt}` } }, { withCredentials: true })
         localStorage.setItem("ctx.UsersAcessToken.true", response.data.acessToken)
-        cookie.set("refreshToken", response.data.refreshToken)
+        cookie.set("refreshToken", response.data.refreshToken, { secure: true, sameSite: true })
     }
     return config;
 }, (error) =>

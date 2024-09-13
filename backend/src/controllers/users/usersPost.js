@@ -54,8 +54,7 @@ export const setUserPost = async (req, res) =>
     })
 }
 
-
-
+// Get Users
 export const getUsersPost = async (req, res) =>
 {
     const name = req.params.name
@@ -97,6 +96,7 @@ export const getUsersPost = async (req, res) =>
     }
 }
 
+// Get Users By id
 export const getPostById = async (req, res) =>
 {
     const postId = req.params.id;
@@ -129,4 +129,46 @@ export const getPostById = async (req, res) =>
             err: error.message
         })
     }
+}
+
+// Update Post
+export const updatePost = async (req, res) =>
+{
+    const postId = req.body.postId
+    const userId = req.body.u;
+    if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
+    const file = req.files.file;
+    if (!file) return res.status(400).json({ msg: "No File Uploaded" });
+    const fileSize = file.data.length;
+    const ext = path.extname(file.name);
+    const fileName = Date.now() + file.md5 + ext;
+    const url = `${req.protocol}://${req.get("host")}/wdpost/${fileName}`;
+    const allowedType = ['.png', '.jpg', '.jpeg', '.jfif', '.gif', '.mp4'];
+
+    if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
+    if (fileSize > 5000000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
+
+    file.mv(`./uploads/wdPost/${fileName}`, async (err) =>
+    {
+        if (err) return res.status(500).json({ msg: err.message });
+        try
+        {
+            // create Post
+            const r = await usersPost.update({ ContentUrl: url }, { where: { postId: postId, userId: userId } });
+            if (r)
+            {
+                return res.status(200).json({ succes: true, msg: "Successfuly" });
+            } else
+            {
+                return res.status(400).json({ succes: false, msg: "error create" })
+            }
+        } catch (error)
+        {
+            res.status(500).send({
+                succes: false,
+                msg: "Internal Server Error",
+                err: error.message
+            });
+        }
+    })
 }

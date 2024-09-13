@@ -63,3 +63,48 @@ export const setGetComment = async (req, res) =>
         })
     }
 }
+
+
+// update Comment
+export const updateComment = async (req, res) =>
+{
+    const commnetId = req.body.cId
+    const newComment = req.body.nc
+
+    if (!commnetId || !newComment)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Tidak Ada Comment Id Atau New Comment"
+        })
+    }
+
+    try
+    {
+        const NewComment = await usersComment.update({
+            Content: newComment
+        }, { where: { commentId: commnetId } })
+        if (newComment)
+        {
+            return res.status(201).send({
+                succes: true,
+                msg: "Data Berhasil Terupdate",
+                newComment: NewComment
+            })
+        } else
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "Data Tidak Berhasil Terupdate"
+            })
+        }
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Server Internal Error",
+            err: error.message
+        })
+    }
+
+}

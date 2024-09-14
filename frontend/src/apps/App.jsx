@@ -2,6 +2,7 @@ import React from 'react'
 import {
   createBrowserRouter,
   RouterProvider,
+  useNavigate
 } from "react-router-dom";
 import Login from './Login.jsx';
 import Register from './Register.jsx';

@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from './Navbar'
 import Sidebar from './SideBar'
+import OutLayout from './OutLayout'
 
 export default function Layout({children}) {
   const userAccounts = localStorage.getItem("UserName")

@@ -11,13 +11,13 @@ import
     verifyRefreshToken,
 } from "../../utilities/jwt.js";
 import path from "path"
-import fs from "fs"
 import { fileTypeFromFile } from "file-type"
 import { dataValid } from "../../validation/dataValidation.js";
 import { Entropy, charset32 } from "entropy-string";
 import { isExists } from "../../validation/sanitization.js";
 import usersPost from "../../models/usersPostModels.js";
 import usersComment from "../../models/usersCommentModels.js";
+import fs from "fs-extra"
 
 // getUsers
 export const getUser = async (req, res) =>
@@ -526,8 +526,13 @@ export const setImage = async (req, res) =>
         try
         {
             // Update PRofile
-            await Users.update({ image_profile: url, image: fileName }, { where: { userId: user.userId } });
-            res.status(200).json({ succes: true, msg: "Successfuly" });
+            const pd = await Users.findOne({ where: { userId: user.userId } })
+            const destoryFile = fs.remove(`./uploads/photoProfile/${pd.image}`)
+            if (destoryFile)
+            {
+                await Users.update({ image_profile: url, image: fileName }, { where: { userId: user.userId } });
+                res.status(200).json({ succes: true, msg: "Successfuly" });
+            }
         } catch (error)
         {
             res.status(500).send({

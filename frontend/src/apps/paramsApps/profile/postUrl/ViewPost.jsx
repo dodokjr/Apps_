@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Layout from '../../../../components/utilities/layout'
 import { SlOptions } from "react-icons/sl";
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
+import Comment from '../../../../components/post/comment';
 
 export default function ViewPost() {
     const {id} = useParams()
@@ -10,7 +12,7 @@ export default function ViewPost() {
     const [content, setContent] = useState("")
     const [msg, setMsg] = useState('')
     const name = localStorage.getItem("UserName")
-
+    const Navigate = useNavigate();
     // respons Post
     const viewPost = async() => {
         try {
@@ -30,6 +32,18 @@ export default function ViewPost() {
         viewPost()
     }, [])
 
+    const deletePost = async() => {
+        try {
+            const d = await axios.delete(`http://localhost:3100/v1/p/post/d/${id}`)
+            if(d.data.succes == true) {
+                return Navigate(`/${name}`)
+            } else {
+                console.log(error)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
     // post Content 
     const postComment = async (e) => {
         e.preventDefault()
@@ -44,7 +58,7 @@ export default function ViewPost() {
     }
   return (
     <Layout>
-        <section className='section'>
+        <section className='section' data-token-name={`${id}`}>
         <div className='flex flex-col p-5 gap-4'>
             <div className='grid grid-cols-3 gap-3'>
             <div className='col-span-2'>
@@ -53,7 +67,7 @@ export default function ViewPost() {
   <summary className="btn btn-xs"><SlOptions/></summary>
   <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
     <li><a>Update Post</a></li>
-    <li><a>Delete Post</a></li>
+    <li><button onClick={deletePost}>Delete Post</button></li>
   </ul>
 </details>
             </div>
@@ -66,31 +80,24 @@ export default function ViewPost() {
                 <img src={res.r?.user.image_profile ? res.r?.user.image_profile : 'http://localhost:3100/photoProfile/pp.jpg'} alt="" className='rounded-full' width={130} height={90}/>
                 </div> : <div className="skeleton rounded-full"></div>}
             </div>
-                <div className='text-2xl row-span-2 col-span-9'>
-              {res.r?.user.name ? <div>{res.r?.user.name}</div> : <div className='skeleton'></div>}
+                <div className='row-span-2 col-span-9'>
+              {res.r?.user.name ? <div className='text-2xl'>{res.r?.user.name}</div> : <div className='skeleton'></div>}
               {res.r?.createdAt ? <div className='text-sm'>{res.r?.createdAt}</div> : <div className='skeleton'></div>}
             </div>
+              <div className='row-span-1 col-span-1 text-2xl'>
+              <p>{res.r?.Caption}</p>
+              </div>
             </div>
             <div className='secsiont'>
                 Comment {res.c?.count}
                 <div className='flex flex-col flex-wrap'>
-                {res.c?.rows.map((r, i) => {
+                    <div className='p-2 grid grid-cols-1'>
+                {!res ? <div>Eroor</div> : res.c?.rows.map((r, i) => {
                     return(
-                        <div className='p-2 grid grid-cols-1'>
-                            <div className='row-span-2' key={r.user.userId}>
-                            {r.user.image_profile ? <div className="avatar ring-primary ring-offset-base-100 w-9 rounded-full ring ring-offset-2">
-                <img src={r?.user.image_profile ? r?.user.image_profile : 'http://localhost:3100/photoProfile/pp.jpg'} alt="" className='rounded-full' width={130} height={90}/>
-                </div> : <div className="skeleton rounded-full"></div>}
-                {/* Offsite */}
-                <div className='text-2xl row-span-2 col-span-2'>
-              {res.r?.user.name ? <div>{r?.user.name}</div> : <div className='skeleton'></div>}
-              {res.r?.createdAt ? <div className='text-sm'>{r?.createdAt}</div> : <div className='skeleton'></div>}
-            </div>
-            <div>{r.Content}</div>
-                        </div>
-                        </div>
+                            <Comment key={r.commentId} r={r}/>
                     )
                 })}
+                </div>
                 <div className='form'>
                     {msg}
                     <form onSubmit={postComment}>

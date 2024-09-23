@@ -24,6 +24,11 @@ const usersPost = dbApps.define("usersPost", {
     allowNull: false
   },
 
+  ContentLocal: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
   Caption: {
     type: DataTypes.TEXT
   },

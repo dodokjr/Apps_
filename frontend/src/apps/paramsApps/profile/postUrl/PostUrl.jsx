@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../../../components/utilities/layout";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import instance from "../../../../libs/axios/instance";
 
 
 const PostUrl = () => {
     const navigate = useNavigate()
-    const [res, setRes]= useState('')
+    const [id, setId]= useState('')
     const [image, setImage] = useState(null);
     const [postImage, setPostImage] = useState(null)
     const [capsion, setCapsion] = useState('')
     const [msg, setMsg] = useState('')
     const name = localStorage.getItem("UserName")
+    const Navigate = useNavigate();
     if(!localStorage.getItem("ctx.UsersAcessToken.true")) return navigate("/login")
     
         const onImageChange = (event) => {
@@ -34,17 +36,41 @@ const PostUrl = () => {
       const r = await axios.post(`http://localhost:3100/v1/p/post/u`, {
         file: postImage,
         name: name,
-        caption: capsion,
-        u: "dae42b1f-0301-4405-8945-c5adf1398fc0"
+        c: capsion,
+        u: id
       }, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-      setMsg(r.data.msg)      
+      setMsg(r.data.msg)
+      if(r.data.succes == true) {
+        return Navigate(`/${name}`)
+      }      
     } catch (error) {
       setMsg(error.response.data.msg)
     }
+        }
+
+        useEffect(() => {
+          getUsers()
+        }, [])
+      
+      
+        const getUsers = async () => {
+          const accessToken = localStorage.getItem("ctx.UsersAcessToken.true")
+      
+          try {
+            const res = await instance.get(`http://localhost:3100/v1/f/users/${name}`, {
+              headers: {
+                Authorization: `Barer ${accessToken}`
+              }
+            }, { withCredentials: true })
+            setId(res.data.data.users.userId)
+            console.log(res.data.data)
+          } catch (error) {
+            console.log(error)
+          }
         }
     return(
         <Layout>

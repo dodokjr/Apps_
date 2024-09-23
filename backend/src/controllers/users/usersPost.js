@@ -4,6 +4,7 @@ import Users from "../../models/usersModel.js";
 import usersPost from "../../models/usersPostModels.js";
 import dbApps from "../../config/db.js";
 import path from "path"
+import fs from "fs-extra"
 import usersComment from "../../models/usersCommentModels.js";
 import LikePost from "../../models/usersLikePost.js";
 
@@ -35,7 +36,7 @@ export const setUserPost = async (req, res) =>
         try
         {
             // create Post
-            const r = await usersPost.create({ userId: userId, ContentUrl: url, Caption: caption });
+            const r = await usersPost.create({ userId: userId, ContentUrl: url, ContentLocal: fileName, Caption: caption });
             if (r)
             {
                 return res.status(200).json({ succes: true, msg: "Successfuly" });
@@ -153,8 +154,8 @@ export const updatePost = async (req, res) =>
         if (err) return res.status(500).json({ msg: err.message });
         try
         {
-            // create Post
-            const r = await usersPost.update({ ContentUrl: url }, { where: { postId: postId, userId: userId } });
+            // update Post
+            const r = await usersPost.update({ ContentUrl: url, ContentLocal: fileName }, { where: { postId: postId, userId: userId } });
             if (r)
             {
                 return res.status(200).json({ succes: true, msg: "Successfuly" });
@@ -171,4 +172,48 @@ export const updatePost = async (req, res) =>
             });
         }
     })
+}
+
+// Delete Post 
+export const deletePost = async (req, res) =>
+{
+    const postId = req.params.postId
+    try
+    {
+        const pd = await usersPost.findOne({ where: { postId: postId } })
+        const destoryFile = fs.remove(`./uploads/wdpost/${pd.ContentLocal}`)
+        if (destoryFile)
+        {
+            // delete Post
+            const d = await usersPost.destroy({ where: { postId: postId } })
+            if (d)
+            {
+                return res.status(201).send({
+                    succes: true,
+                    postId: postId,
+                    data: d
+                })
+            } else
+            {
+                return res.status(400).send({
+                    succes: false,
+                    postId: postId,
+                    data: d
+                })
+            }
+        } else
+        {
+            return res.status(400), send({
+                succes: false,
+                data: null,
+            })
+        }
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        });
+    }
 }

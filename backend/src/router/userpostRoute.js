@@ -1,7 +1,7 @@
 import express from "express";
 import { autenticate } from "../controllers/errorHandling.js";
 import usersPost from "../models/usersPostModels.js";
-import { getPostById, getUsersPost, setUserPost, updatePost } from "../controllers/users/usersPost.js";
+import { deletePost, getPostById, getUsersPost, setUserPost, updatePost } from "../controllers/users/usersPost.js";
 
 const usersPostRoute = express.Router();
 // Post
@@ -16,6 +16,7 @@ usersPostRoute.get("/post/:name", getUsersPost);
 
 
 // delete
+usersPostRoute.delete("/post/d/:postId", deletePost);
 
 
 

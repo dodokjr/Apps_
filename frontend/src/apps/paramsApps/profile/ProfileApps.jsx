@@ -13,9 +13,8 @@ import Loding from '../../../components/utilities/loding';
 export default function ProfileApps() {
   const {name} = useParams()
   const [res, setRes] = useState('')
-  const [online, setOnline] = useState()
-  const navigate = useNavigate()
-  const comName = localStorage.getItem("UserName")
+  const userId = localStorage.getItem("userId")
+  const userData = JSON.parse(userId);
 
   useEffect(() => {
     getUsers()
@@ -65,7 +64,7 @@ export default function ProfileApps() {
         </div>
       </div>
 
-            <ButtonFollow name={name} comName={comName}/>
+            <ButtonFollow name={name} comName={userData.name}/>
             <div className='grid-cols-3 gap-3'>
             <span>Post {res.dataPost.count}</span>
             <a href='#' onClick={() => document.getElementById("modalFollowers").showModal()}>Followers 100 </a>

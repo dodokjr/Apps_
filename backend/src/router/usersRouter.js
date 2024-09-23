@@ -1,6 +1,7 @@
 import express from "express";
-import { getUser, setUsers, setActivateUser, setLogin, setImage, getUserProfile, setForgotpassword, setResetPassword, getUserVeryfy, setRefreshToken, setLogut } from "../controllers/users/usersControl.js";
+import { getUser, setUsers, setActivateUser, setLogin, setImage, getUserProfile, setForgotpassword, setResetPassword, getUserVeryfy, setRefreshToken, setLogut, getUserById } from "../controllers/users/usersControl.js";
 import { autenticate } from "../controllers/errorHandling.js";
+import { getPostById } from "../controllers/users/usersPost.js";
 
 const usersRoute = express.Router()
 // Post
@@ -15,6 +16,7 @@ usersRoute.post("/logout", setLogut);
 // get
 usersRoute.get("/users", autenticate, getUser);
 usersRoute.get("/activate/:id", setActivateUser);
+usersRoute.get("/usersId/:usersId", autenticate, getUserById);
 usersRoute.get("/users/:name", autenticate, getUserProfile);
 usersRoute.get("/email/:email", getUserVeryfy);
 usersRoute.get("/token", setRefreshToken);
@@ -23,6 +25,7 @@ usersRoute.get("/token", setRefreshToken);
 
 
 // delete
+
 
 
 

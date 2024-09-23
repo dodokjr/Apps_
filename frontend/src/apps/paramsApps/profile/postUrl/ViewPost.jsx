@@ -11,7 +11,7 @@ export default function ViewPost() {
     const [res, setRes] = useState('')
     const [content, setContent] = useState("")
     const [msg, setMsg] = useState('')
-    const name = localStorage.getItem("UserName")
+    const name = localStorage.getItem("users")
     const Navigate = useNavigate();
     // respons Post
     const viewPost = async() => {
@@ -36,7 +36,7 @@ export default function ViewPost() {
         try {
             const d = await axios.delete(`http://localhost:3100/v1/p/post/d/${id}`)
             if(d.data.succes == true) {
-                return Navigate(`/${name}`)
+                return Navigate(`/${name.name}`)
             } else {
                 console.log(error)
             }

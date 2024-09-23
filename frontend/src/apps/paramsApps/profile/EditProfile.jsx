@@ -14,8 +14,8 @@ export default function EditProfile() {
     const [updateImageMsg, setUpdateImageMsg] = useState('')
     const [msgError, setMsgError] = useState('')
 
-  const navigate = useNavigate()
-  const comName = localStorage.getItem("UserName")
+  const userId = localStorage.getItem("userId")
+  const userData = JSON.parse(userId);
   
   useEffect(() => {
     getUsers()
@@ -25,13 +25,12 @@ export default function EditProfile() {
     const accessToken = localStorage.getItem("ctx.UsersAcessToken.true")
 
     try {
-      const res = await axios.get(`http://localhost:3100/v1/f/users/${comName}`, {
+      const res = await axios.get(`http://localhost:3100/v1/f/users/${userData.name}`, {
         headers: {
           Authorization: `Barer ${accessToken}`
         }
       }, { withCredentials: true })
       setRes(res.data.data.users)
-      console.log(res.data.data)
     } catch (error) {
       console.log(error)
     }
@@ -54,7 +53,7 @@ export default function EditProfile() {
     try {
       const formData = new FormData();
       formData.append('file', postImage);
-      const r = await axios.post(`http://localhost:3100/v1/f/pp/${comName}`, {
+      const r = await axios.post(`http://localhost:3100/v1/f/pp/${userData.name}`, {
         file: postImage
       }, {
         headers: {
@@ -67,7 +66,6 @@ export default function EditProfile() {
     }
   }
 
-  console.log(res)
     return (
     <Layout>
         <div className='p-3 flex justify-center'>

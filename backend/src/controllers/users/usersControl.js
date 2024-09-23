@@ -58,6 +58,33 @@ export const getUserProfile = async (req, res) =>
     }
 }
 
+// getUsers By Id
+export const getUserById = async (req, res) =>
+{
+    const userId = req.params.usersId
+    try
+    {
+        const users = await Users.findOne({
+            attributes: ["userId", "email", "name", "image_profile", "bio", "isLogin"], where: {
+                userId: userId,
+                isActive: true,
+            }
+        });
+        res.status(200).send({
+            succes: true,
+            msg: "Users add",
+            users
+        })
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+}
+
 // getUsers By Email
 export const getUserVeryfy = async (req, res) =>
 {
@@ -306,6 +333,8 @@ export const setLogin = async (req, res, next) =>
                         userId: user.userId,
                         name: user.name,
                         email: user.email,
+                        profile: user.image_profile,
+                        isActive: user.isActive
                     },
                     acessToken: token,
                     refreshToken: refresh,
@@ -328,6 +357,12 @@ export const setLogin = async (req, res, next) =>
         })
     }
 };
+
+// update Email
+export const updateEmail = async (req, res) =>
+{
+
+}
 
 // Logout
 export const setLogut = async (req, res) =>
@@ -437,6 +472,13 @@ export const setResetPassword = async (req, res) =>
             conformPassword: "requered"
         }
         const validp = await dataValid(valide, req.body);
+        if (!req.body.password || !req.body.conformPassword)
+        {
+            return res.status(402).send({
+                succes: false,
+                msg: "Password Kosong",
+            })
+        }
         if (validp.data.password !== validp.data.conformPassword)
         {
             return res.status(400).send({
@@ -481,14 +523,14 @@ export const setResetPassword = async (req, res) =>
             await t.rollback();
             return res.status(400).json({
                 errors: ["Email not found"],
-                message: "Forgot password field",
+                msg: "Forgot password field",
                 data: null,
             });
         }
         await t.commit();
         return res.status(200).json({
             errors: [],
-            message: "Forgot password success, please check your email",
+            msg: "Forgot password success, please check your email",
             data: null,
         });
     } catch (error)

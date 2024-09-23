@@ -20,10 +20,10 @@ export default function Login() {
           pin: pin
         }, { withCredentials: true })
         cookies.set("refreshToken", res.data.refreshToken)
+        console.log(res.data.data)
         localStorage.setItem("ctx.UsersAcessToken.true", res.data.acessToken)
-        localStorage.setItem("UserName", name)
+        localStorage.setItem("userId", JSON.stringify(res.data.data))
         localStorage.setItem("refreshToken", res.data.refreshToken)
-        console.log(res.data)
         return Navigate(`/${name}`)
       } catch (error) {
         if(error.response){

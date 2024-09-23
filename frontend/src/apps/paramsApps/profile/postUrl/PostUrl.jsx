@@ -12,7 +12,7 @@ const PostUrl = () => {
     const [postImage, setPostImage] = useState(null)
     const [capsion, setCapsion] = useState('')
     const [msg, setMsg] = useState('')
-    const name = localStorage.getItem("UserName")
+    const name = localStorage.getItem("users")
     const Navigate = useNavigate();
     if(!localStorage.getItem("ctx.UsersAcessToken.true")) return navigate("/login")
     
@@ -35,7 +35,7 @@ const PostUrl = () => {
       formData.append('file', postImage);
       const r = await axios.post(`http://localhost:3100/v1/p/post/u`, {
         file: postImage,
-        name: name,
+        name: name.name,
         c: capsion,
         u: id
       }, {
@@ -61,7 +61,7 @@ const PostUrl = () => {
           const accessToken = localStorage.getItem("ctx.UsersAcessToken.true")
       
           try {
-            const res = await instance.get(`http://localhost:3100/v1/f/users/${name}`, {
+            const res = await instance.get(`http://localhost:3100/v1/f/users/${name.name}`, {
               headers: {
                 Authorization: `Barer ${accessToken}`
               }

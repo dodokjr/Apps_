@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -19,6 +19,7 @@ import NotFound from '../components/utilities/Notfound.jsx';
 import Atifity from './Atifity.jsx';
 import PostUrl from './paramsApps/profile/postUrl/PostUrl.jsx';
 import ViewPost from './paramsApps/profile/postUrl/ViewPost.jsx';
+import instance from '../libs/axios/instance.js';
 
 const router = createBrowserRouter([
   {

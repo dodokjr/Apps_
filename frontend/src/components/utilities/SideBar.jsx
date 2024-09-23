@@ -3,16 +3,20 @@ import { FaHome, FaCompass } from "react-icons/fa";
 import { IoIosNotifications, IoMdClose } from "react-icons/io";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { CgProfile } from "react-icons/cg";
 import { Link, NavLink, useLocation, useParams } from "react-router-dom";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true);
     const params = useLocation()
+    const userAccounts = localStorage.getItem("userId")
+    const userData = JSON.parse(userAccounts)
     const Menus = [
       { title: "home", Icons: <FaHome size={25}/>, link: "/home", params: params},
       { title: "Explore", Icons: <FaCompass size={25}/>, link:"/#" },
       { title: "NotifiCations", Icons: <IoIosNotifications size={25}/>, link:"/#" },
-      {title: "Upload", Icons: <IoAddCircleOutline size={25}/>, link: "/upload", params: params}
+      {title: "Upload", Icons: <IoAddCircleOutline size={25}/>, link: "/upload", params: params},
+      {title: userData.name, Icons: <CgProfile size={25}/>, link: `/${userData.name}`, params: params}
     ];
   return (
         <div className="flex bottom-full h-full">
@@ -48,7 +52,7 @@ const Sidebar = () => {
                 index === 0 && "bg-light-white"
               } `}
             >
-              <NavLink to={Menu.link} className={`flex  rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 text-sm items-center gap-x-4 
+              <NavLink to={Menu.link} className={`flex  rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 items-center gap-x-4 
               ${Menu.gap ? "mt-9" : "mt-2"} ${
                 index === 0 && "bg-light-white"
               } ${params.pathname == Menu.link && "bg-slate-700"}`}>

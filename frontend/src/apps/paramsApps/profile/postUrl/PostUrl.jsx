@@ -12,7 +12,8 @@ const PostUrl = () => {
     const [postImage, setPostImage] = useState(null)
     const [capsion, setCapsion] = useState('')
     const [msg, setMsg] = useState('')
-    const name = localStorage.getItem("users")
+    const name = localStorage.getItem("userId");
+    const userData = JSON.parse(name);
     const Navigate = useNavigate();
     if(!localStorage.getItem("ctx.UsersAcessToken.true")) return navigate("/login")
     
@@ -35,20 +36,23 @@ const PostUrl = () => {
       formData.append('file', postImage);
       const r = await axios.post(`http://localhost:3100/v1/p/post/u`, {
         file: postImage,
-        name: name.name,
         c: capsion,
-        u: id
+        u: userData.userId
       }, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       setMsg(r.data.msg)
+      console.log(r)
       if(r.data.succes == true) {
-        return Navigate(`/${name}`)
+        return Navigate(`/${userData.name}`)
       }      
     } catch (error) {
-      setMsg(error.response.data.msg)
+      if(error.response){
+        console.log(error.response.data.msg)
+        setMsg(error.response.data.msg)
+      }
     }
         }
 
@@ -61,7 +65,7 @@ const PostUrl = () => {
           const accessToken = localStorage.getItem("ctx.UsersAcessToken.true")
       
           try {
-            const res = await instance.get(`http://localhost:3100/v1/f/users/${name.name}`, {
+            const res = await instance.get(`http://localhost:3100/v1/f/users/${userData.name}`, {
               headers: {
                 Authorization: `Barer ${accessToken}`
               }
@@ -69,7 +73,9 @@ const PostUrl = () => {
             setId(res.data.data.users.userId)
             console.log(res.data.data)
           } catch (error) {
-            console.log(error)
+            if(error.response){
+              console.log(error.response)
+            }
           }
         }
     return(
@@ -79,7 +85,7 @@ const PostUrl = () => {
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-            Post {name} {msg}
+            Post {userData.name} {msg}
             </h2>
             </div>
 

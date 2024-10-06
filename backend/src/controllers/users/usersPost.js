@@ -12,12 +12,12 @@ import LikePost from "../../models/usersLikePost.js";
 export const setUserPost = async (req, res) =>
 {
     const t = await dbApps.transaction();
-    const name = req.body.name;
     const caption = req.body.c;
     const userId = req.body.u;
-    if (!name) return res.sendStatus(400);
-    const user = await Users.findOne({ where: { name: name } })
-    if (!user) return res.sendStatus(422);
+    if (!userId) return res.status(400).send({
+        msg: "No UserId",
+        succes: "fales"
+    });
     // file
     if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
     const file = req.files.file;
@@ -46,11 +46,15 @@ export const setUserPost = async (req, res) =>
             }
         } catch (error)
         {
-            res.status(500).send({
-                succes: false,
-                msg: "Internal Server Error",
-                err: error.message
-            });
+            if (error.message)
+            {
+                fs.remove(`./uploads/wdpost/${fileName}`)
+                res.status(500).send({
+                    succes: false,
+                    msg: "Internal Server Error",
+                    err: error.message
+                });
+            }
         }
     })
 }

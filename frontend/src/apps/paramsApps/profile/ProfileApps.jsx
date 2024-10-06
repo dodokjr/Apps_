@@ -59,7 +59,7 @@ export default function ProfileApps() {
         <img src={res.users.image_profile ? res.users.image_profile : 'http://localhost:3100/photoProfile/pp.jpg'} alt="" className='rounded-full'/>
         </div> }
             <div className='text-2xl row-span-2 col-span-2 p-2'>
-              <div>@{res.users.name} {res.users.isLogin}</div>
+              <div>@{res.users.name}</div>
             </div>
         </div>
       </div>

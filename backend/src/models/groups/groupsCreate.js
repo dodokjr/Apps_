@@ -15,8 +15,17 @@ const GroupsCreate = dbApps.define('groups', {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
     },
+    nameGroup: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    photoGroup: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     OwnerGrup: {
         type: Sequelize.STRING,
+        allowNull: false
     },
     isPrivate: {
         type: Sequelize.BOOLEAN,
@@ -26,9 +35,6 @@ const GroupsCreate = dbApps.define('groups', {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
-    isFollowGroup: {
-        type: Sequelize.STRING
-    }
 },
     {
         tabelName: "groups",

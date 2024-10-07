@@ -4,6 +4,7 @@ import usersPostRoute from "./userpostRoute.js";
 import usersCommentRoute from "./userComment.js";
 import usersFollowRoute from "./follow.js";
 import usersLikeRoute from "./likePost.js";
+import groups from "./group/groups.js";
 
 
 const route = express.Router()
@@ -14,6 +15,8 @@ route.use("/v1/p", usersCommentRoute)
 route.use("/v1/fo", usersFollowRoute);
 route.use("/v1/fo", usersLikeRoute);
 
+// Groups
+route.use("/v1/group", groups)
 
 
 route.use("*", (req, res, next) =>

@@ -124,7 +124,6 @@ export const getUserVeryfy = async (req, res) =>
 export const setUsers = async (req, res, next) =>
 {
     const t = await dbApps.transaction()
-    const pp = fs.readfile(`./uploads/photoProfile/photoprofile.jpg`)
     try
     {
         const valid = {
@@ -181,8 +180,8 @@ export const setUsers = async (req, res, next) =>
         // Create Data
         const outData = await Users.create({
             ...users.data,
-            image_profile: `http://localhost:3100/photoprofile/${pp}`,
-            image: `${pp}`,
+            image_profile: `http://localhost:3100/photoprofile/photoprofile.jpg`,
+            image: `photoprofile.jpg`,
             bio: "No Bio Nyet",
             is_active: false,
             expireTime: new Date(),

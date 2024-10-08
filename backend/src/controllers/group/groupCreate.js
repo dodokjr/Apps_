@@ -62,3 +62,69 @@ export const createGroups = async (req, res) =>
         })
     }
 }
+
+export const joinGroup = async (req, res) =>
+{
+    const name = req.body.name
+    const userId = req.body.userId
+    const groupId = req.body.groupId
+    if (!name || !userId || !groupId)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Data Tidak Boleh Kosong!!"
+        })
+    }
+    const users = await GroupsMembers.findOne({ where: { GroupId: groupId } })
+    if (userId == users.userId)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Anda Sudah Bergabung di Group Ini"
+        })
+    }
+
+    const groups = await GroupsCreate.findOne({ where: { GroupId: groupId } })
+    if (!groups)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Groups Tidak Ada"
+        })
+    }
+
+    try
+    {
+        if (groups.isPrivate == false)
+        {
+            const r = await GroupsMembers.create({ GroupId: groupId, userId: userId, role: "members" })
+            if (r)
+            {
+                return res.status(201).send({
+                    succes: true,
+                    msg: `anda telah ditambahkan di${groups.nameGroup}`,
+                    data: r
+                })
+            } else
+            {
+                return res.status(400).send({
+                    succes: false,
+                    msg: `anda gagal ditambahkan di${groups.nameGroup}`
+                })
+            }
+        } else
+        {
+            return res.status(302).send({
+                succes: false,
+                msg: "diTunggu oleh ouner"
+            })
+        }
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        })
+    }
+}

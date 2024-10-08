@@ -278,6 +278,7 @@ export const setLogin = async (req, res, next) =>
         const valid = {
             name: "requered",
             password: "requered",
+            pin: "requered"
         };
         const user = await dataValid(valid, req.body);
         const data = user.data;
@@ -316,29 +317,41 @@ export const setLogin = async (req, res, next) =>
             // check password
             if (compare(data.password, user.password))
             {
-                // generate token
-                const usr = {
-                    userId: user.userId,
-                    name: user.name,
-                    email: user.email,
-                    image_profile: user.image_profile,
-                };
-                const token = generateAccessToken(usr);
-                const refresh = generateRefreshToken(usr);
-                await Users.update({ isLogin: true }, { where: { userId: user.userId } })
-                return res.status(200).json({
-                    errors: [],
-                    msg: "Login success",
-                    data: {
+                // check pin
+                if (compare(data.pin, user.pin))
+                {
+                    // generate token
+                    const usr = {
                         userId: user.userId,
                         name: user.name,
                         email: user.email,
-                        profile: user.image_profile,
-                        isActive: user.isActive
-                    },
-                    acessToken: token,
-                    refreshToken: refresh,
-                });
+                        image_profile: user.image_profile,
+                    };
+                    const token = generateAccessToken(usr);
+                    const refresh = generateRefreshToken(usr);
+                    await Users.update({ isLogin: true }, { where: { userId: user.userId } })
+                    return res.status(200).json({
+                        errors: [],
+                        msg: "Login success",
+                        data: {
+                            userId: user.userId,
+                            name: user.name,
+                            email: user.email,
+                            profile: user.image_profile,
+                            isActive: user.isActive
+                        },
+                        acessToken: token,
+                        refreshToken: refresh,
+                    });
+                } else
+                {
+                    return res.status(400).send({
+                        succes: false,
+                        errors: ["wrong Pin"],
+                        msg: "Wrong Pin",
+                        data: data
+                    })
+                }
             } else
             {
                 return res.status(400).json({

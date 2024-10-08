@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer"
 import Mailgen from "mailgen";
 
-const base_url = "http://localhost:5173/actifity";
+const base_url = "http://localhost:5173/actifity/";
 const base_url_forgotpassword = "http://localhost:5173/forgotpassword"
 const base_url_S = "http://localhost:5173"
 

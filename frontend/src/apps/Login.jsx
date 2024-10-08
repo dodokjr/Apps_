@@ -10,30 +10,34 @@ export default function Login() {
     const [msg, setMsg] = useState('');
     const cookies = new Cookies();
     const Navigate = useNavigate();
+    const userId = localStorage.getItem("userId")
+    const userData = JSON.parse(userId);
     
     const Login = async(e) => {
       e.preventDefault();
-      try {
-        const res = await axios.post('http://localhost:3100/v1/f/login', {
-          name: name,
-          password: password,
-          pin: pin
-        }, { withCredentials: true })
-        cookies.set("refreshToken", res.data.refreshToken)
-        console.log(res.data.data)
-        localStorage.setItem("ctx.UsersAcessToken.true", res.data.acessToken)
-        localStorage.setItem("userId", JSON.stringify(res.data.data))
-        localStorage.setItem("refreshToken", res.data.refreshToken)
-        return Navigate(`/${name}`)
-      } catch (error) {
-        if(error.response){
-          setMsg(error.response.data.msg)
+      if(!userData){
+        try {
+          const res = await axios.post('http://localhost:3100/v1/f/login', {
+            name: name,
+            password: password,
+            pin: pin
+          }, { withCredentials: true })
+          cookies.set("refreshToken", res.data.refreshToken)
+          console.log(res.data.data)
+          localStorage.setItem("ctx.UsersAcessToken.true", res.data.acessToken)
+          localStorage.setItem("userId", JSON.stringify(res.data.data))
+          localStorage.setItem("refreshToken", res.data.refreshToken)
+          return Navigate(`/${name}`)
+        } catch (error) {
+          if(error.response){
+            setMsg(error.response.data.msg)
+          }
         }
-      }
+      } 
     }
     useEffect(() => {
-    if(localStorage.getItem("usersToken")) {
-      return Navigate(`/${name}`)
+    if(userData?.name) {
+      return Navigate(`/${userData.name}`)
     }
   },[])
   return (

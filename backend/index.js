@@ -12,6 +12,7 @@ import Follower from "./src/models/usersFollowers.js"
 import LikePost from "./src/models/usersLikePost.js"
 import GroupsCreate from "./src/models/groups/groupsCreate.js"
 import GroupsMembers from "./src/models/groups/groups.js"
+import GroupsPost from "./src/models/groups/postGroup.js"
 
 
 
@@ -32,7 +33,7 @@ try
 {
     await dbApps.authenticate();
     console.log("database Koneksi");
-    await dbApps.sync()
+    await GroupsPost.sync()
 } catch (error)
 {
     console.error(error)

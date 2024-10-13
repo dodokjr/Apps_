@@ -23,15 +23,22 @@ const GroupsCreate = dbApps.define('groups', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    filePhotoGroup: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    descriptionGroup: {
+        type: Sequelize.STRING,
+    },
     OwnerGrup: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    isPrivate: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
+    amountGroup: {
+        type: Sequelize.STRING,
+        allowNull: false
     },
-    isSign: {
+    isPrivate: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },

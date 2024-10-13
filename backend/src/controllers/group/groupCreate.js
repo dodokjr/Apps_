@@ -1,13 +1,18 @@
 import GroupsMembers from "../../models/groups/groups.js";
 import GroupsCreate from "../../models/groups/groupsCreate.js";
 import Users from "../../models/usersModel.js";
+import path from "path"
 
+// create Group
 export const createGroups = async (req, res) =>
 {
     const userId = req.body.userId
     const name = req.body.name
     const Private = req.body.private
     const nameGroup = req.body.nameg
+    const desc = req.body.desc
+    if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" });
+    const photoGroup = req.files.pp
     if (!Private || Private !== "false" && Private !== "true")
     {
         return res.status(400).send({
@@ -22,47 +27,60 @@ export const createGroups = async (req, res) =>
             msg: "data kosong mohon di isi"
         })
     }
+    const fileSize = photoGroup.data.length;
+    const ext = path.extname(photoGroup.name);
+    const fileName = Date.now() + photoGroup.md5 + ext;
+    const url = `${req.protocol}://${req.get("host")}/photoProfile/group/${fileName}`;
+    const allowedType = ['.png', '.jpg', '.jpeg', '.jfif', '.gif'];
 
-    try
+    if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
+    if (fileSize > 5000000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
+
+    photoGroup.mv(`./uploads/photoProfile/group/${fileName}`, async (err) =>
     {
-        const r = await GroupsCreate.create({ userId: userId, OwnerGrup: name, isPrivate: Private, isSign: true, nameGroup: nameGroup, photoGroup: "https://i.pinimg.com/736x/05/df/80/05df80197cf29ee4bf9c3b02b4f0038c.jpg" })
-        if (r)
+        if (err) return res.status(500).json({ msg: err.message });
+        try
         {
-            const sign = await GroupsMembers.create({ GroupId: r.GroupId, userId: r.userId, role: "Admin" })
-            if (sign)
+            const r = await GroupsCreate.create({ userId: userId, OwnerGrup: name, isPrivate: Private, isSign: true, nameGroup: nameGroup, photoGroup: url, filePhotoGroup: fileName, descriptionGroup: desc, amountGroup: 10 })
+            if (r)
             {
-                return res.status(201).send({
-                    succes: true,
-                    msg: `Group Berhasil Dibuat oleh ${name}`,
-                    data: {
-                        r, sign
-                    }
-                })
+                const sign = await GroupsMembers.create({ GroupId: r.GroupId, userId: r.userId, role: "Admin" })
+                if (sign)
+                {
+                    return res.status(201).send({
+                        succes: true,
+                        msg: `Group Berhasil Dibuat oleh ${name}`,
+                        data: {
+                            r, sign
+                        }
+                    })
+                } else
+                {
+                    return res.status(400).send({
+                        succes: false,
+                        msg: `Group Gagal Dibuat Oleh ${name}`,
+                        data: { r, sign }
+                    })
+                }
             } else
             {
                 return res.status(400).send({
                     succes: false,
-                    msg: `Group Gagal Dibuat Oleh ${name}`,
-                    data: { r, sign }
+                    msg: "Data Gagal memuat"
                 })
             }
-        } else
+        } catch (error)
         {
-            return res.status(400).send({
+            res.status(500).send({
                 succes: false,
-                msg: "Data Gagal memuat"
+                msg: "Internal Server Error",
+                err: error.message
             })
         }
-    } catch (error)
-    {
-        res.status(500).send({
-            succes: false,
-            msg: "Internal Server Error",
-            err: error.message
-        })
-    }
+    })
 }
 
+// Join Group
 export const joinGroup = async (req, res) =>
 {
     const name = req.body.name
@@ -128,3 +146,5 @@ export const joinGroup = async (req, res) =>
         })
     }
 }
+
+// Post Group

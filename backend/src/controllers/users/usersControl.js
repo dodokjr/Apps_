@@ -381,6 +381,14 @@ export const updateEmail = async (req, res) =>
 export const setLogut = async (req, res) =>
 {
     const name = req.body.name;
+    const pin = req.body.pin;
+    if (!name || !pin)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "your name or pin is blank"
+        })
+    }
     try
     {
         const user = await Users.findOne({ where: { name: name } })
@@ -398,11 +406,21 @@ export const setLogut = async (req, res) =>
                 msg: "You must log in"
             })
         }
-        await Users.update({ isLogin: false }, { where: { userId: user.userId } })
-        res.status(200).send({
-            succes: true,
-            msg: "you have successfully Logout"
-        })
+        // Validasi Pin 
+        if (compare(pin, user.pin))
+        {
+            await Users.update({ isLogin: false }, { where: { userId: user.userId } })
+            return res.status(200).send({
+                succes: true,
+                msg: "you have successfully Logout"
+            })
+        } else
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "your pin is wrong"
+            })
+        }
     } catch (error)
     {
         res.status(500).send({

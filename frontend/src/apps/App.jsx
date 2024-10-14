@@ -20,6 +20,8 @@ import Atifity from './Atifity.jsx';
 import PostUrl from './paramsApps/profile/postUrl/PostUrl.jsx';
 import ViewPost from './paramsApps/profile/postUrl/ViewPost.jsx';
 import instance from '../libs/axios/instance.js';
+import Groups from './paramsApps/group/groups.jsx';
+import CreateGroups from './paramsApps/group/createGroups.jsx';
 
 const router = createBrowserRouter([
   {
@@ -69,6 +71,14 @@ const router = createBrowserRouter([
  {
   path: "/post/:id",
   element: <ViewPost/>
+ },
+ {
+  path: "/group",
+  element: <Groups/>
+ },
+ {
+  path: "/group/create",
+  element: <CreateGroups/>
  },
   {
     path: "*",

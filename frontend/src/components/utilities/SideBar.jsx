@@ -4,6 +4,7 @@ import { IoIosNotifications, IoMdClose } from "react-icons/io";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
+import { MdGroups } from "react-icons/md";
 import { Link, NavLink, useLocation, useParams } from "react-router-dom";
 
 const Sidebar = () => {
@@ -14,6 +15,7 @@ const Sidebar = () => {
     const Menus = [
       { title: "home", Icons: <FaHome size={25}/>, link: "/home", params: params},
       { title: "Explore", Icons: <FaCompass size={25}/>, link:"/#" },
+      {title: "Group", Icons: <MdGroups size={25}/>, link:"/group"},
       { title: "NotifiCations", Icons: <IoIosNotifications size={25}/>, link:"/#" },
       {title: "Upload", Icons: <IoAddCircleOutline size={25}/>, link: "/upload", params: params},
       {title: userData.name, Icons: <CgProfile size={25}/>, link: `/${userData.name}`, params: params}

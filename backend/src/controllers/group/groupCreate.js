@@ -1,5 +1,6 @@
 import GroupsMembers from "../../models/groups/groups.js";
 import GroupsCreate from "../../models/groups/groupsCreate.js";
+import GroupsPost from "../../models/groups/postGroup.js";
 import Users from "../../models/usersModel.js";
 import path from "path"
 
@@ -148,3 +149,117 @@ export const joinGroup = async (req, res) =>
 }
 
 // Post Group
+export const postGroupImage = async (req, res) =>
+{
+    const mmbId = req.body.memberGroupId
+    const grId = req.body.GroupId
+    const userId = req.body.userId
+    const cT = req.body.contentText
+
+    if (!mmbId || !grId || !userId)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "MemberId atau GroupId atau UserId kosong",
+            data: { mmbId, grId, userId }
+        })
+    }
+    if (!req.files.post === null)
+    {
+        return res.status(404).send({
+            succes: false,
+            msg: "gambar kosong"
+        })
+    }
+    // tidak ada content Text
+    else
+    {
+        const post = req.files.post
+        const fileSize = post.data.length;
+        const ext = path.extname(post.name);
+        const fileName = Date.now() + post.md5 + ext;
+        const url = `${req.protocol}://${req.get("host")}/wdPost/group/${fileName}`;
+        const allowedType = ['.png', '.jpg', '.jpeg', '.jfif', '.gif'];
+
+        if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Images" });
+        if (fileSize > 5000000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
+
+        post.mv(`./uploads/wdPost/group/${fileName}`, async (err) =>
+        {
+            if (err) return res.status(500).send({ succes: false, msg: "error!!!", err: err.message })
+
+            try
+            {
+                const role = await GroupsMembers.findOne({ where: { memberGroupId: mmbId } })
+                const r = await GroupsPost.create({ memberGroupId: mmbId, GroupId: grId, userId: userId, contentImage: url, contentSaveImage: fileName, contentText: cT, role: role.role })
+                if (r)
+                {
+                    return res.status(201).send({
+                        succes: true,
+                        msg: "content Berhasil Ditambahkan",
+                        data: r
+                    })
+                } else
+                {
+                    return res.status(400).send({
+                        succes: false,
+                        msg: "data tidak Ditemukan atau error!",
+                        data: r
+                    })
+                }
+            } catch (error)
+            {
+                res.status(500).send({
+                    succes: false,
+                    msg: "Error !!!",
+                    err_: error.message
+                })
+            }
+        })
+    }
+}
+
+export const postGroupText = async (req, res) =>
+{
+    const mmbId = req.body.memberGroupId
+    const grId = req.body.GroupId
+    const userId = req.body.userId
+    const cT = req.body.contentText
+
+    if (!cT)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "tidak ada content Yang Terupload"
+        })
+    } else
+    {
+        try
+        {
+            const role = await GroupsMembers.findOne({ where: { memberGroupId: mmbId } })
+            const r = await GroupsPost.create({ memberGroupId: mmbId, GroupId: grId, userId: userId, contentImage: "https://i.pinimg.com/enabled_lo/564x/2d/67/f9/2d67f9834649b584682ab58606f5a27e.jpg", contentSaveImage: "i.pinimg.com", contentText: cT, role: role.role })
+            if (r)
+            {
+                return res.status(201).send({
+                    succes: true,
+                    msg: "content Berhasil Ditambahkan",
+                    data: r
+                })
+            } else
+            {
+                return res.status(400).send({
+                    succes: false,
+                    msg: "content Tidak Titemukan atau error",
+                    data: r
+                })
+            }
+        } catch (error)
+        {
+            res.status(500).send({
+                succes: false,
+                msg: "Internal Server Error",
+                err: error.message
+            })
+        }
+    }
+}

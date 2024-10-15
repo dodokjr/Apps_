@@ -11,7 +11,8 @@ export default function ViewPost() {
     const [res, setRes] = useState('')
     const [content, setContent] = useState("")
     const [msg, setMsg] = useState('')
-    const name = localStorage.getItem("users")
+    const userId = localStorage.getItem("userId")
+  const userData = JSON.parse(userId);
     const Navigate = useNavigate();
     // respons Post
     const viewPost = async() => {
@@ -48,7 +49,7 @@ export default function ViewPost() {
     const postComment = async (e) => {
         e.preventDefault()
         try {
-            const req = await axios.post(`http://localhost:3100/v1/p/comment/p/${id}?name=${name}&c=${content}`) 
+            const req = await axios.post(`http://localhost:3100/v1/p/comment/p/${id}?name=${userData.name}&c=${content}`) 
             if(req) {
                 setMsg(req.data.msg)
             }
@@ -57,7 +58,7 @@ export default function ViewPost() {
         }
     }
   return (
-    <Layout>
+    <Layout title={userData.name}>
         <section className='section' data-token-name={`${id}`}>
         <div className='flex flex-col p-5 gap-4'>
             <div className='grid grid-cols-3 gap-3'>

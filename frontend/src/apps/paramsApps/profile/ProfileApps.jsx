@@ -9,6 +9,7 @@ import { ButtonFollow } from '../../../components/profile/assets/ButtonAx';
 import {PostMap} from '../../../components/profile/post/post'
 import NotFound from '../../../components/utilities/Notfound';
 import Loding from '../../../components/utilities/loding';
+import Helmett from '../../../components/utilities/helmet';
 
 export default function ProfileApps() {
   const {name} = useParams()
@@ -46,7 +47,7 @@ export default function ProfileApps() {
   }
   
   return (
-    <Layout>
+    <Layout title={name}>
       <section className='section'>
         <div className='flex flex-col p-5 gap-4'>
       <div className='grid grid-rows-3 grid-flow-col gap-4'>
@@ -72,54 +73,30 @@ export default function ProfileApps() {
             </div>
             <p>{res.users.bio}</p>
         </div>
-        <div className='flex justify-center'>
-        <ul className="menu bg-base-200 lg:menu-horizontal rounded-box">
-  <li>
-    <a>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-      Inbox
-      <span className="badge badge-sm">99+</span>
-    </a>
-  </li>
-  <li>
-    <a>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      Updates
-      <span className="badge badge-sm badge-warning">NEW</span>
-    </a>
-  </li>
-  <li>
-    <a>
-      Stats
-      <span className="badge badge-xs badge-info"></span>
-    </a>
-  </li>
-</ul>
+        <div className='flex justify-center items-center'>
+        <div role="tablist" className="tabs tabs-lifted tabs-lg">
+  <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Post"  defaultChecked/>
+  <div role="tabpanel" className="tab-content rounded-box p-6">
+  <div className='flex flex-col p-5 gap-4'>
+          {res.dataPost.count > 0 ? <PostMap api={res.dataPost}/> : <b className='text-2xl '>No Content</b>}
         </div>
-        <div className='flex flex-col p-5 gap-4'>
-          <PostMap api={res.dataPost}/>
+  </div>
+
+  <input
+    type="radio"
+    name="my_tabs_2"
+    role="tab"
+    className="tab"
+    aria-label="Tab" />
+  <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+    Tab content 2
+  </div>
+
+  <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab" />
+  <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+    Tab content 3
+  </div>
+</div>
         </div>
       </section>
       <ModalFollowers/>

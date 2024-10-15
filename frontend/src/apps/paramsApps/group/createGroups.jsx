@@ -3,7 +3,7 @@ import Layout from '../../../components/utilities/layout'
 
 export default function CreateGroups() {
   return (
-    <Layout>
+    <Layout title={"Create Groups"}>
         <div className='flex justify-start items-start p-2'>
             <div className='p-3'>
                 <div className='breadcrumbs text-sm'>
@@ -32,7 +32,7 @@ export default function CreateGroups() {
                         </div>
                         <div>
                             <label className='block text-sm font-medium text-white'>Group Photo Profile</label>
-                            
+                            <input type="file" className="file-input w-full max-w-xs" />
                         </div>
                 </form>
                 </div>

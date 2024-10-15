@@ -294,3 +294,34 @@ export const getGroupAll = async (req, res) =>
         })
     }
 }
+
+// Get Group And Members
+export const getGroupAllMembers = async (req, res) =>
+{
+    try
+    {
+        const r = await GroupsMembers.findAndCountAll({ include: [{ model: GroupsCreate, foreignKey: "GroupId", attributes: ["GroupId", "OwnerGrup", "photoGroup", "nameGroup", "descriptionGroup", "isPrivate"] }, { model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile", "bio", "email", "is_login"] }] })
+        if (r)
+        {
+            return res.status(200).send({
+                succes: true,
+                msg: "berhasil didapat",
+                data: r
+            })
+        } else
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "error!",
+                data: r
+            })
+        }
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "error!",
+            err: error.message
+        })
+    }
+}

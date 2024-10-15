@@ -79,7 +79,7 @@ const PostUrl = () => {
           }
         }
     return(
-        <Layout>
+        <Layout title={"Upload"}>
             <div className="p-2">
             <section className='section'>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

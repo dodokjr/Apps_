@@ -22,7 +22,7 @@ export default function Groups() {
         response()
     }, [])
   return (
-    <Layout>
+    <Layout title={"Groups"}>
         <h1 className='flex justify-center text-xl'>Groups {data.count}</h1>
         <div className='flex justify-center items-center'>
         <ul className="menu bg-base-200 lg:menu-horizontal rounded-box">

@@ -6,6 +6,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
 import { MdGroups } from "react-icons/md";
 import { Link, NavLink, useLocation, useParams } from "react-router-dom";
+import Helmett from "./helmet";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true);

@@ -142,6 +142,20 @@ export const setUsers = async (req, res, next) =>
                 msg: "Password not match"
             });
         }
+        if (users.data.password.length < 8)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "Password Tidak Lebih Dari 8 Huruf"
+            })
+        }
+        if (users.data.pin.length < 5)
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "Pin Tidak Lebih dari 5 nomer"
+            })
+        }
         if (users.data.length > null)
         {
             return res.status(400).send({
@@ -600,11 +614,18 @@ export const setImage = async (req, res) =>
         {
             // Update PRofile
             const pd = await Users.findOne({ where: { userId: user.userId } })
-            const destoryFile = fs.remove(`./uploads/photoProfile/${pd.image}`)
-            if (destoryFile)
+            if (pd.image === "photoprofile.jpg")
             {
                 await Users.update({ image_profile: url, image: fileName }, { where: { userId: user.userId } });
                 res.status(200).json({ succes: true, msg: "Successfuly" });
+            } else
+            {
+                const destoryFile = fs.remove(`./uploads/photoProfile/${pd.image}`)
+                if (destoryFile)
+                {
+                    await Users.update({ image_profile: url, image: fileName }, { where: { userId: user.userId } });
+                    res.status(200).json({ succes: true, msg: "Successfuly" });
+                }
             }
         } catch (error)
         {
@@ -615,6 +636,42 @@ export const setImage = async (req, res) =>
             });
         }
     })
+}
+
+// Remove Image 
+export const removeImage = async (req, res) =>
+{
+    const name = req.params.name;
+    if (!name) return res.sendStatus(400);
+    const user = await Users.findOne({ where: { name: name } })
+    if (!user) return res.sendStatus(422);
+    try
+    {
+        if (user.image === "photoprofile.jpg")
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "photo Profile masih original"
+            })
+        } else
+        {
+            const destoryFile = fs.remove(`./uploads/photoProfile/${user.image}`)
+            if (destoryFile)
+            {
+                await Users.update({ image_profile: "http://localhost:3100/photoprofile/photoprofile.jpg", image: "photoprofile.jpg" }, { where: { userId: user.userId } });
+                res.status(200).json({ succes: true, msg: "Successfuly" });
+            } else
+            {
+                return res.status(400).send({
+                    succes: false,
+                    msg: "Error Picture",
+                })
+            }
+        }
+    } catch (error)
+    {
+
+    }
 }
 
 // Refresh Token 

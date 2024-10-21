@@ -37,7 +37,7 @@ export default function ViewPost() {
         try {
             const d = await axios.delete(`http://localhost:3100/v1/p/post/d/${id}`)
             if(d.data.succes == true) {
-                return Navigate(`/${name.name}`)
+                return Navigate(`/${userData.name}`)
             } else {
                 console.log(error)
             }
@@ -64,13 +64,18 @@ export default function ViewPost() {
             <div className='grid grid-cols-3 gap-3'>
             <div className='col-span-2'>
             <div className=' flex justify-end'>
-            <details className="dropdown">
+            {res.r?.user.name === userData.name ? <details className="dropdown">
   <summary className="btn btn-xs"><SlOptions/></summary>
   <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
     <li><a>Update Post</a></li>
     <li><button onClick={deletePost}>Delete Post</button></li>
   </ul>
-</details>
+</details> : <details className="dropdown">
+  <summary className="btn btn-xs"><SlOptions/></summary>
+  <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+    <li><a>Report Post</a></li>
+  </ul>
+</details>}
             </div>
             {res ? <img src={res.r.ContentUrl} className='w-full' width={350} height={250}/> : <div className="skeleton h-32 w-32"></div>}
             </div>

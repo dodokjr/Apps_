@@ -1,5 +1,5 @@
 import express from "express";
-import { getUser, setUsers, setActivateUser, setLogin, setImage, getUserProfile, setForgotpassword, setResetPassword, getUserVeryfy, setRefreshToken, setLogut, getUserById } from "../controllers/users/usersControl.js";
+import { getUser, setUsers, setActivateUser, setLogin, setImage, getUserProfile, setForgotpassword, setResetPassword, getUserVeryfy, setRefreshToken, setLogut, getUserById, removeImage } from "../controllers/users/usersControl.js";
 import { autenticate } from "../controllers/errorHandling.js";
 import { getPostById } from "../controllers/users/usersPost.js";
 
@@ -25,6 +25,7 @@ usersRoute.get("/token", setRefreshToken);
 
 
 // delete
+usersRoute.delete("/pp/d/:name", removeImage)
 
 
 

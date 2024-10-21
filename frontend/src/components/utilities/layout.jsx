@@ -9,9 +9,15 @@ import { useBasePath } from '../../libs/params/useBasePath'
 export default function Layout({title, children}) {
   const userAccounts = localStorage.getItem("userId")
   const userData = JSON.parse(userAccounts)
-  useEffect(() => {
-    document.title = title;
-  }, [title]);
+  if(title) {
+    useEffect(() => {
+      document.title = title;
+    }, [title]);
+  } else {
+    useEffect(() => {
+      document.title = "loss Root || Components"
+    }, [title])
+  }
   return (
     <>
   <main className='App w-full '>

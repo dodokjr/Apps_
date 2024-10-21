@@ -50,6 +50,7 @@ export default function EditProfile() {
   const fetchData = async (e) => {
     e.preventDefault()
     console.log(postImage)
+   if(postImage) {
     try {
       const formData = new FormData();
       formData.append('file', postImage);
@@ -64,6 +65,18 @@ export default function EditProfile() {
     } catch (error) {
       setMsgError(error.response.data.msg)
     }
+   } else {
+    try {
+      const ruwet = await axios.delete(`http://localhost:3100/v1/f/pp/d/${userData.name}`)
+      if(ruwet) {
+        setUpdateImageMsg(ruwet.data.msg)
+      } else {
+        setMsgError(ruwet.response.data.msg)
+      }
+    } catch (error) {
+      setMsgError(error.response.data.msg)
+    }
+   }
   }
 
     return (

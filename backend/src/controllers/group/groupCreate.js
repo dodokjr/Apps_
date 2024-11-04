@@ -325,3 +325,9 @@ export const getGroupAllMembers = async (req, res) =>
         })
     }
 }
+
+// Get Group And Members By ID
+export default getGroupAndMembersById = async (req, res) =>
+{
+    const id = req.params.id
+}

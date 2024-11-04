@@ -22,6 +22,7 @@ import ViewPost from './paramsApps/profile/postUrl/ViewPost.jsx';
 import instance from '../libs/axios/instance.js';
 import Groups from './paramsApps/group/groups.jsx';
 import CreateGroups from './paramsApps/group/createGroups.jsx';
+import GroupById from './paramsApps/group/groupById.jsx';
 
 const router = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
  {
   path: "/group/create",
   element: <CreateGroups/>
+ },
+ {
+  path: "/group/:id",
+  element: <GroupById/>
  },
   {
     path: "*",

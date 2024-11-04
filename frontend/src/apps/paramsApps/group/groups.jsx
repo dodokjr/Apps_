@@ -60,7 +60,31 @@ export default function Groups() {
     <tbody>
       {data.rows && data.rows.map((r, i) => {
         return(
-            <tr>
+            <>
+            {r.OwnerGrup == userData.name ? <tr>
+        <td>
+          <div className="flex items-center gap-3">
+            <div className="avatar">
+              <div className="mask mask-squircle h-12 w-12">
+                <img
+                  src={r.photoGroup}
+                  alt="Avatar Tailwind CSS Component" />
+              </div>
+            </div>
+            <div>
+              <a className="font-bold" href={`group/${r.GroupId}`}>{r.nameGroup}</a>
+              <div className="text-sm text-white opacity-50 underline decoration-sky-500" >{r.OwnerGrup}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          {r.descriptionGroup}
+        </td>
+        <td>{r.isPrivate == true ? "Private" : "public"}</td>
+        <th>
+          {r.OwnerGrup === userData.name? <button className="btn btn-ghost btn-xs">My Group</button> : <button className="btn btn-ghost btn-xs">Gabung Group</button>}
+        </th>
+            </tr> : <tr>
         <td>
           <div className="flex items-center gap-3">
             <div className="avatar">
@@ -83,7 +107,8 @@ export default function Groups() {
         <th>
           {r.OwnerGrup === userData.name? <button className="btn btn-ghost btn-xs">My Group</button> : <button className="btn btn-ghost btn-xs">Gabung Group</button>}
         </th>
-      </tr>
+            </tr>}
+            </>
         )
       })}
     </tbody>

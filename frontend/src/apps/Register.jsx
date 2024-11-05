@@ -104,20 +104,30 @@ export default function Register() {
           <div>
             <div className="flex items-center justify-between">
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
-              Password
+              Cofrim Password
             </label>
             </div>
             <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={comfPassword}
-                onChange={(e) => setComfPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+            {comfPassword == password ? 
+            <input
+            id="password"
+            name="password"
+            type="password"
+            value={comfPassword}
+            onChange={(e) => setComfPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            className="block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+            :
+            <input
+            placeholder="Type here"
+            type="password"
+            value={comfPassword}
+            onChange={(e) => setComfPassword(e.target.value)}
+            required
+            className="block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-red-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" /> 
+            }
             </div>
           </div>
 

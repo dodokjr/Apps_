@@ -127,7 +127,7 @@ export default function Login() {
             </span>
             <span className="absolute left-0 pl-2.5 -translate-x-12 group-hover:translate-x-0 ease-out duration-200">
             </span>
-            <span className="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-white">Button Text</span>
+            <span className="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-white">Login</span>
           </button>
           </div>
         </form>

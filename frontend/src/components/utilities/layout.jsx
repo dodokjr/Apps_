@@ -24,8 +24,8 @@ export default function Layout({title, children}) {
   <div className=" overflow-hidden flex flex-row">
                 <Sidebar />
                 <div className="flex flex-col flex-1">
-                  <Navbar data={userData.name} />
-                    <div data-accounts={`${userData.userId}`}>
+                  <Navbar data={!userData.name ? "null" : userData.name}/>
+                    <div>
                       {children}
                     </div>
                 </div>

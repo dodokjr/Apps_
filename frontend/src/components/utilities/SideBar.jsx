@@ -9,17 +9,17 @@ import { Link, NavLink, useLocation, useParams } from "react-router-dom";
 import Helmett from "./helmet";
 
 const Sidebar = () => {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const params = useLocation()
     const userAccounts = localStorage.getItem("userId")
     const userData = JSON.parse(userAccounts)
     const Menus = [
       { title: "home", Icons: <FaHome size={25}/>, link: "/home", params: params},
-      { title: "Explore", Icons: <FaCompass size={25}/>, link:"/#" },
+      { title: "Explore", Icons: <FaCompass size={25}/>, link:"/exprolers" },
       {title: "Group", Icons: <MdGroups size={25}/>, link:"/group"},
-      { title: "NotifiCations", Icons: <IoIosNotifications size={25}/>, link:"/#" },
+      { title: "NotifiCations", Icons: <IoIosNotifications size={25}/>, link:"/notif" },
       {title: "Upload", Icons: <IoAddCircleOutline size={25}/>, link: "/upload", params: params},
-      {title: userData.name, Icons: <CgProfile size={25}/>, link: `/${userData.name}`, params: params}
+      {title: userData?.name, Icons: <CgProfile size={25}/>, link: `${!userData?.name ? "/login" : `/p/${userData?.name}`}`, params: params}
     ];
   return (
         <div className="flex bottom-full h-full">

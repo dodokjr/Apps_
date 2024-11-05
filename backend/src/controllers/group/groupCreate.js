@@ -327,7 +327,41 @@ export const getGroupAllMembers = async (req, res) =>
 }
 
 // Get Group And Members By ID
-export default getGroupAndMembersById = async (req, res) =>
+export const getGroupAndMembersById = async (req, res) =>
 {
     const id = req.params.id
+    if (!id == null)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Null Data",
+            error: "null"
+        })
+    }
+    try
+    {
+        const gm = await GroupsMembers.findAndCountAll({ where: { GroupId: id }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile", "bio", "email", "is_login"] }] })
+        if (!gm)
+        {
+            return res.status(401).send({
+                succes: null,
+                msg: " Error Page",
+                data: gm
+            })
+        } else
+        {
+            return res.status(200).send({
+                succes: true,
+                msg: " succesfully Get Data",
+                data: gm
+            })
+        }
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "error!",
+            err: error.message
+        })
+    }
 }

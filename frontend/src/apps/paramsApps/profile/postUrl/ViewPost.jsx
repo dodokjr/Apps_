@@ -58,13 +58,13 @@ export default function ViewPost() {
         }
     }
   return (
-    <Layout title={userData.name}>
+    <Layout>
         <section className='section' data-token-name={`${id}`}>
         <div className='flex flex-col p-5 gap-4'>
             <div className='grid grid-cols-3 gap-3'>
             <div className='col-span-2'>
-            <div className=' flex justify-end'>
-            {res.r?.user.name === userData.name ? <details className="dropdown">
+            {!userData?.name ? <div> Opps Your Must Login</div> : <div className=' flex justify-end'>
+            {res.r?.user.name === userData?.name ? <details className="dropdown">
   <summary className="btn btn-xs"><SlOptions/></summary>
   <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
     <li><a>Update Post</a></li>
@@ -76,7 +76,7 @@ export default function ViewPost() {
     <li><a>Report Post</a></li>
   </ul>
 </details>}
-            </div>
+            </div>}
             {res ? <img src={res.r.ContentUrl} className='w-full' width={350} height={250}/> : <div className="skeleton h-32 w-32"></div>}
             </div>
             <div className='flex flex-col'>
@@ -104,13 +104,13 @@ export default function ViewPost() {
                     )
                 })}
                 </div>
-                <div className='form'>
+                {!userData?.name ? <a href='/login'>Login</a> : <div className='form'>
                     {msg}
                     <form onSubmit={postComment}>
                         <textarea className="textarea textarea-bordered" placeholder="Comments" value={content} onChange={(e) => setContent(e.target.value)}/>
                         {content && <button type='submit' className='btn'>Post</button>}
                     </form>
-                </div>
+                </div>}
                 </div>
             </div>
             </div>

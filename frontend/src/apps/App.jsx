@@ -23,11 +23,22 @@ import instance from '../libs/axios/instance.js';
 import Groups from './paramsApps/group/groups.jsx';
 import CreateGroups from './paramsApps/group/createGroups.jsx';
 import GroupById from './paramsApps/group/groupById.jsx';
+import Home from './components_Apps/Home.jsx';
+import Exprolers from './components_Apps/Exprolers.jsx';
+import NotifiCations from './components_Apps/NotifiCations.jsx';
 
 const router = createBrowserRouter([
   {
     path: "/home",
-    element: "Hello world",
+    element: <Home/>,
+  },
+  {
+    path: "/exprolers",
+    element: <Exprolers/>
+  },
+  {
+    path: "/notif",
+    element: <NotifiCations/>
   },
   {
     path: "/login",
@@ -46,7 +57,7 @@ const router = createBrowserRouter([
     element: <Follow/>,
   },
   {
-    path: "/:name",
+    path: "/p/:name",
     element: <ProfileApps/>
   },
   {

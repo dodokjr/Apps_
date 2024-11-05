@@ -1,5 +1,5 @@
 import express from "express";
-import { createGroups, getGroupAll, getGroupAllMembers, joinGroup, postGroupImage, postGroupText } from "../../controllers/group/groupCreate.js";
+import { createGroups, getGroupAll, getGroupAllMembers, getGroupAndMembersById, joinGroup, postGroupImage, postGroupText } from "../../controllers/group/groupCreate.js";
 
 const groups = express.Router();
 // Post
@@ -11,6 +11,7 @@ groups.post("/uploadText", postGroupText);
 // get
 groups.get("/", getGroupAll);
 groups.get("/gm", getGroupAllMembers);
+groups.get("/gm/:id", getGroupAndMembersById);
 
 // put
 

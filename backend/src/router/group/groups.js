@@ -1,5 +1,5 @@
 import express from "express";
-import { createGroups, getGroupAll, getGroupAllMembers, getGroupAndMembersById, joinGroup, postGroupImage, postGroupText } from "../../controllers/group/groupCreate.js";
+import { createGroups, getGroupAll, getGroupAllMembers, getGroupAndMembersById, joinGroup, outGroupMembers, postGroupImage, postGroupText, roleGroupMembers } from "../../controllers/group/groupCreate.js";
 
 const groups = express.Router();
 // Post
@@ -7,6 +7,7 @@ groups.post("/creategroup", createGroups);
 groups.post("/join", joinGroup);
 groups.post("/uploadImage", postGroupImage);
 groups.post("/uploadText", postGroupText);
+groups.post("/role", roleGroupMembers);
 
 // get
 groups.get("/", getGroupAll);
@@ -17,6 +18,7 @@ groups.get("/gm/:id", getGroupAndMembersById);
 
 
 // delete
+groups.delete("/out/:id", outGroupMembers)
 
 
 

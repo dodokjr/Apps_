@@ -365,3 +365,136 @@ export const getGroupAndMembersById = async (req, res) =>
         })
     }
 }
+
+// Out Group And Members By Id
+export const outGroupMembers = async (req, res) =>
+{
+    const id = req.params.id
+    if (!id === null)
+    {
+        return res.status(400).send({
+            succes: false,
+            data: null,
+        })
+    }
+
+    try
+    {
+        const pd = await GroupsMembers.findOne({ where: { memberGroupId: id } })
+        if (pd.role === "members" || pd.role === "Admin" < 1)
+        {
+            // Out Group
+            const d = await GroupsMembers.destroy({ where: { memberGroupId: id } })
+            if (d)
+            {
+                return res.status(202).send({
+                    succes: true,
+                    members: id,
+                    data: d
+                })
+            } else
+            {
+                return res.status(400).send({
+                    succes: false,
+                    members: id,
+                    data: d
+                })
+            }
+        } else
+        {
+            return res.status(400).send({
+                succes: false,
+                msg: "if you are admin then someone has to say you are admin",
+                data: pd,
+            })
+        }
+    } catch (error)
+    {
+        res.status(500).send({
+            succes: false,
+            msg: "Internal Server Error",
+            err: error.message
+        });
+    }
+}
+
+// role Group Members
+export const roleGroupMembers = async (req, res) =>
+{
+    const id = req.body.gId
+    const user = req.body.mmbId
+    const admin = req.body.adminId
+    if (!id || !user || !admin === null)
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Null Data",
+            data: null
+        })
+    }
+
+    if (req.body.role === "members" || req.body.role === "Admin")
+    {
+        try
+        {
+            const pd = await GroupsCreate.findOne({ where: { GroupId: id } })
+            if (pd)
+            {
+                const ad = await GroupsMembers.findOne({ where: { memberGroupId: admin } })
+                if (pd.userId === ad.userId)
+                {
+                    if (ad.role === "Admin")
+                    {
+                        const role = await GroupsMembers.update({ role: req.body.role }, { where: { memberGroupId: user } })
+                        if (role)
+                        {
+                            return res.status(201).send({
+                                succes: true,
+                                msg: "Role Berhasil TerUbah",
+                                data: role
+                            })
+                        } else
+                        {
+                            return res.status(400).send({
+                                succes: false,
+                                msg: "Error Code",
+                                data: role
+                            })
+                        }
+                    } else
+                    {
+                        return res.status(400).send({
+                            succes: false,
+                            msg: "Kamu Bukan Owner Grup"
+                        })
+                    }
+                } else
+                {
+                    return res.status(400).send({
+                        succes: false,
+                        msg: " Kamu Bukan Admin"
+                    })
+                }
+            } else
+            {
+                return res.status(400).send({
+                    succes: false,
+                    msg: "Group Tidak Ada!!",
+                })
+            }
+        } catch (error)
+        {
+            res.status(500).send({
+                succes: false,
+                msg: "error!",
+                err: error.message
+            })
+        }
+    } else
+    {
+        return res.status(400).send({
+            succes: false,
+            msg: "Harus members atau Admin Only!"
+        })
+    }
+}

@@ -37,7 +37,7 @@ export default function ViewPost() {
         try {
             const d = await axios.delete(`http://localhost:3100/v1/p/post/d/${id}`)
             if(d.data.succes == true) {
-                return Navigate(`/${userData.name}`)
+                return Navigate(`/p/${userData.name}`)
             } else {
                 console.log(error)
             }

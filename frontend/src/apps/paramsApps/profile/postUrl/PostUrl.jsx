@@ -46,7 +46,7 @@ const PostUrl = () => {
       setMsg(r.data.msg)
       console.log(r)
       if(r.data.succes == true) {
-        return Navigate(`/${userData.name}`)
+        return Navigate(`/p/${userData.name}`)
       }      
     } catch (error) {
       if(error.response){

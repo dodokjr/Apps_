@@ -33,7 +33,7 @@ try
 {
     await dbApps.authenticate();
     console.log("database Koneksi");
-    await GroupsPost.sync()
+    await dbApps.sync()
 } catch (error)
 {
     console.error(error)

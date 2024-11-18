@@ -21,6 +21,11 @@ const Followed = dbApps.define('followed', {
     isFollow: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
+    },
+    followedUserId: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
     }
 },
     {

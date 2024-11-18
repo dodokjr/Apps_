@@ -27,7 +27,7 @@ export default function Login() {
           localStorage.setItem("ctx.UsersAcessToken.true", res.data.acessToken)
           localStorage.setItem("userId", JSON.stringify(res.data.data))
           localStorage.setItem("refreshToken", res.data.refreshToken)
-          return Navigate(`/${name}`)
+          return Navigate(`/p/${name}`)
         } catch (error) {
           if(error.response){
             setMsg(error.response.data.msg)

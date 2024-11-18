@@ -1,3 +1,4 @@
+
 import { Model, Sequelize } from "sequelize";
 import dbApps from "../../config/db.js";
 import Users from "../usersModel.js";

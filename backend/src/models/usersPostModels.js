@@ -32,6 +32,10 @@ const usersPost = dbApps.define("usersPost", {
   Caption: {
     type: DataTypes.TEXT
   },
+  params_url: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
 },
   {
     tableName: "usersPost",

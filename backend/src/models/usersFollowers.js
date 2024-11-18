@@ -12,7 +12,10 @@ const Follower = dbApps.define('follower', {
         primaryKey: true,
         allowNull: false,
     },
-
+    name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
     userId: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,

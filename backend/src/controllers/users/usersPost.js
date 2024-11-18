@@ -7,6 +7,7 @@ import path from "path"
 import fs from "fs-extra"
 import usersComment from "../../models/usersCommentModels.js";
 import LikePost from "../../models/usersLikePost.js";
+import randomValue from "../../utilities/url_params.js";
 
 // Post
 export const setUserPost = async (req, res) =>
@@ -36,7 +37,7 @@ export const setUserPost = async (req, res) =>
         try
         {
             // create Post
-            const r = await usersPost.create({ userId: userId, ContentUrl: url, ContentLocal: fileName, Caption: caption });
+            const r = await usersPost.create({ userId: userId, ContentUrl: url, ContentLocal: fileName, Caption: caption, params_url: randomValue });
             if (r)
             {
                 return res.status(200).json({ succes: true, msg: "Successfuly" });
@@ -104,14 +105,14 @@ export const getUsersPost = async (req, res) =>
 // Get Users By id
 export const getPostById = async (req, res) =>
 {
-    const postId = req.params.id;
+    const params_url = req.params.id;
     try
     {
         const r = await usersPost.findOne({
-            where: { postId: postId },
+            where: { params_url: params_url },
             include: [{ model: Users }, { model: LikePost }]
         })
-        const c = await usersComment.findAndCountAll({ where: { postId: postId }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile", "bio", "email"] }] })
+        const c = await usersComment.findAndCountAll({ where: { postId: r.postId }, include: [{ model: Users, foreignKey: "userId", attributes: ["userId", "name", "image_profile", "bio", "email"] }] })
 
 
         if (!c || !r)
@@ -184,12 +185,12 @@ export const deletePost = async (req, res) =>
     const postId = req.params.postId
     try
     {
-        const pd = await usersPost.findOne({ where: { postId: postId } })
+        const pd = await usersPost.findOne({ where: { params_url: postId } })
         const destoryFile = fs.remove(`./uploads/wdpost/${pd.ContentLocal}`)
         if (destoryFile)
         {
             // delete Post
-            const d = await usersPost.destroy({ where: { postId: postId } })
+            const d = await usersPost.destroy({ where: { params_url: postId } })
             if (d)
             {
                 return res.status(201).send({
